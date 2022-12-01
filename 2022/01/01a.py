@@ -24,6 +24,7 @@ def get_most_calories(lines: list[str]) -> int:
             current_calories = 0
         else:
             current_calories += int(line)
+
     return most_calories
 
 
