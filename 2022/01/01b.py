@@ -12,7 +12,7 @@ logging.basicConfig(
 )
 
 
-def get_most_calories(lines: list[str]) -> int:
+def get_top_calories(lines: list[str]) -> int:
     calories_each = []
     current_calories = 0
     lines.append("\n")
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     with open(input_file, "r") as file:
         lines = file.readlines()
 
-    result = get_most_calories(lines)
+    result = get_top_calories(lines)
     toc = perf_counter()
     time_us = round((toc - tic) * 1000000)
 
