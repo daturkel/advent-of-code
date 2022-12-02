@@ -1,15 +1,7 @@
 #!/usr/bin/env python3
 
-import logging
 import sys
 from time import perf_counter
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(message)s",
-    handlers=[logging.StreamHandler()],
-    datefmt="%H:%M:%S",
-)
 
 # How many points is each choice worth
 POINT_MAP = {"A": 1, "B": 2, "C": 3}
@@ -42,4 +34,4 @@ if __name__ == "__main__":
     toc = perf_counter()
     time_us = round((toc - tic) * 1000000)
 
-    logging.info(f"{result=} ({time_us}µs)")
+    print(f"{result=} ({time_us}µs)")
