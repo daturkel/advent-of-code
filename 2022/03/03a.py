@@ -7,7 +7,7 @@ from time import perf_counter
 
 def get_priority(char: str) -> int:
     if char in string.ascii_lowercase:
-        # ord("A") = 65, plus the 26 extra pts for uppercase
+        # ord("a") = 97
         offset = 96
     else:
         # ord("A") = 65, plus the 26 extra pts for uppercase
