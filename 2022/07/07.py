@@ -25,17 +25,14 @@ def find_folders(lines: list[str]) -> int:
     root = Node(name="", parent=None)
     node = root
 
-    pwd = []
     for line in lines[1:]:
         match line.split():
             # go up
             case [_, "cd", ".."]:
                 folder_sizes.append(node.get_size())
-                pwd = pwd[:-1]
                 node = node.parent
             # add a directory to filesystem
             case [_, "cd", dir_name]:
-                pwd.append(dir_name)
                 node.children[dir_name] = Node(name=dir_name, parent=node)
                 node = node.children[dir_name]
             # noop
