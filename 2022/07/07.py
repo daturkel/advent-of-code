@@ -8,7 +8,8 @@ REQUIRED = 30000000
 
 
 class Node:
-    def __init__(self, name: str, parent: "Node" | None, size: int | None = None):
+    # re: weird type hint, see https://bugs.python.org/issue45857
+    def __init__(self, name: str, parent: "Node | None", size: int | None = None):
         self.name = name
         self.parent = parent
         self._size = size
