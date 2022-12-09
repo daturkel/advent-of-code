@@ -15,8 +15,10 @@ def follow(head: tuple[int, int], tail: tuple[int, int]) -> tuple[int, int]:
     # don't need to move if we're already close
     if abs(dx) <= 1 and abs(dy) <= 1:
         pass
-    # if we're not close but in the right column/row...
+    # otherwise, we need to move
     else:
+        # if we're in the right column (row), dx (dy) will be 0 and we move 0 in that direction
+        # if either direction is ±2, then we move ±1 in that direction
         dx = dx if dx == 0 else dx // abs(dx)
         dy = dy if dy == 0 else dy // abs(dy)
         x += dx
