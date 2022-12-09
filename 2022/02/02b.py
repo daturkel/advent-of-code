@@ -12,12 +12,12 @@ ABC = ["A", "B", "C"]
 OUTCOME_MAP = {"X": -1, "Y": 0, "Z": 1}
 
 
-def get_points(games: list[str]) -> int:
+def get_points(games: list[list[str]]) -> int:
     total = 0
     for game in games:
-        them, outcome = game
-        them = ABC.index(them)
-        outcome = OUTCOME_MAP[outcome]
+        them_str, outcome_str = game
+        them = ABC.index(them_str)
+        outcome = OUTCOME_MAP[outcome_str]
         me = ABC[(them + outcome) % 3]
         total += POINT_MAP[me] + 3 + 3 * outcome
 

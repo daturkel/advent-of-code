@@ -15,12 +15,12 @@ def execute_move(
     return stacks
 
 
-def move_boxes(lines: list[str]) -> str:
+def move_boxes(lines: list[str]) -> tuple[str, str]:
     # parse the stacks
     n_stacks = (len(lines[0]) + 1) // 4
 
-    stacks_a = [list() for i in range(n_stacks + 1)]
-    stacks_b = [list() for i in range(n_stacks + 1)]
+    stacks_a: list[list[str]] = [list() for i in range(n_stacks + 1)]
+    stacks_b: list[list[str]] = [list() for i in range(n_stacks + 1)]
 
     for line_no, line in enumerate(lines):
         if line == "":

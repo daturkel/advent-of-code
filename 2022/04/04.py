@@ -4,7 +4,7 @@ import sys
 from time import perf_counter
 
 
-def find_overlaps(lines: list[str]) -> tuple[int, int]:
+def find_overlaps(lines: list[list[str]]) -> tuple[int, int]:
     total_a = 0
     total_b = 0
     for l, r in lines:

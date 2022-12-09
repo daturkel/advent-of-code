@@ -13,7 +13,7 @@ WIN_MAP = {
 }
 
 
-def get_points(games: list[str]) -> int:
+def get_points(games: list[list[str]]) -> int:
     total = 0
     for game in games:
         them, me = game

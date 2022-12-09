@@ -8,11 +8,11 @@ REQUIRED = 30000000
 
 
 class Node:
-    def __init__(self, name: str, parent: "Node", size: int | None = None):
+    def __init__(self, name: str, parent: "Node" | None, size: int | None = None):
         self.name = name
         self.parent = parent
         self._size = size
-        self.children = {}
+        self.children: dict[str, Node] = {}
 
     def get_size(self):
         if not self._size:
@@ -20,7 +20,7 @@ class Node:
         return self._size
 
 
-def find_folders(lines: list[str]) -> int:
+def find_folders(lines: list[str]) -> tuple[int, int]:
     folder_sizes = []
     root = Node(name="", parent=None)
     node = root
@@ -30,7 +30,7 @@ def find_folders(lines: list[str]) -> int:
             # go up
             case [_, "cd", ".."]:
                 folder_sizes.append(node.get_size())
-                node = node.parent
+                node = node.parent # type: ignore
             # add a directory to filesystem
             case [_, "cd", dir_name]:
                 node.children[dir_name] = Node(name=dir_name, parent=node)

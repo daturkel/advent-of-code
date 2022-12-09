@@ -19,8 +19,8 @@ def sum_badges(rucksacks: list[str]) -> int:
     total = 0
     for group_idx in range(len(rucksacks) // 3):
         group = rucksacks[(group_idx * 3) : (group_idx + 1) * 3]
-        badge = set.intersection(*[set(rucksack) for rucksack in group])
-        badge = list(badge)[0]
+        badge_set = set.intersection(*[set(rucksack) for rucksack in group])
+        badge = list(badge_set)[0]
         total += get_priority(badge)
 
     return total
