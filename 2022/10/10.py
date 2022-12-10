@@ -11,7 +11,7 @@ def parse_signals(instructions: list[list[str]]) -> tuple[int, list[list[str]]]:
     hold = False  # whether or not to execute the last addx instruction yet
     amt = 0  # amount to add from last addx instruction
 
-    strengths = []  # part a
+    strength = 0  # part a
     screen: list[list[str]] = [[] for i in range(6)]  # part b
 
     while ic < len(instructions):
@@ -26,9 +26,9 @@ def parse_signals(instructions: list[list[str]]) -> tuple[int, list[list[str]]]:
 
         cc += 1  # increment cycle count
 
-        # record strength for part a if cycle count is 20, 60, ...
+        # add strength for part a if cycle count is 20, 60, ...
         if (cc - 20) % 40 == 0:
-            strengths.append(cc * xr)
+            strength += cc * xr
 
         # if we were waiting on an addx instruction...
         if hold:
@@ -45,7 +45,7 @@ def parse_signals(instructions: list[list[str]]) -> tuple[int, list[list[str]]]:
             amt = int(instructions[ic][1])  # record amt
             hold = True  # turn on hold for next cycle
 
-    return sum(strengths), screen
+    return strength, screen
 
 
 if __name__ == "__main__":
