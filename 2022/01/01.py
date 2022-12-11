@@ -4,20 +4,22 @@ import sys
 from time import perf_counter
 
 
-def get_most_calories(lines: list[str]) -> int:
-    most_calories = 0
+def get_top_calories(lines: list[str]) -> tuple[int, int]:
+    calories_each = []
     current_calories = 0
     lines.append("\n")
 
     for line in lines:
         if line == "\n":
-            if most_calories < current_calories:
-                most_calories = current_calories
+            calories_each.append(current_calories)
             current_calories = 0
         else:
             current_calories += int(line)
 
-    return most_calories
+    calories_each = sorted(calories_each)
+    top_cals = calories_each[-1]
+    top_3_cals = sum(calories_each[-3:])
+    return top_cals, top_3_cals
 
 
 if __name__ == "__main__":
@@ -26,8 +28,8 @@ if __name__ == "__main__":
     with open(input_file, "r") as file:
         lines = file.readlines()
 
-    result = get_most_calories(lines)
+    top_cals, top_3_cals = get_top_calories(lines)
     toc = perf_counter()
     time_us = round((toc - tic) * 1000000)
 
-    print(f"{result=} ({time_us}µs)")
+    print(f"{top_cals=}, {top_3_cals=} ({time_us}µs)")
