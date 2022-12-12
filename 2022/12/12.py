@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
 from collections import defaultdict
-from dataclasses import dataclass
 import sys
 from time import perf_counter
-from typing import Callable, TypeAlias
+from typing import Callable
 
 Point = tuple[int, int]
 
@@ -80,6 +79,7 @@ def find_path(terrain: list[list[int]], start: Point, end: Point | None) -> floa
                 distances[neighbor] = this_distance
 
         unvisited.remove(current)
+        # this is slow, presumably there's a better way
         current = min(unvisited, key=lambda x: distances[x])
         current_height = terrain[current[1]][current[0]]
 
