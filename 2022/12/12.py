@@ -55,7 +55,7 @@ def find_path(terrain: list[list[int]], start: Point, end: Point | None) -> floa
     distances: defaultdict[Point, float] = defaultdict(lambda: float("inf"))
     distances[start] = 0
 
-    unvisited = {(x, y) for x in range(x_max) for y in range(y_max)}
+    visited = set()
 
     current = start
     current_height = terrain[start[1]][start[0]]
@@ -68,6 +68,7 @@ def find_path(terrain: list[list[int]], start: Point, end: Point | None) -> floa
         can_move = lambda h1, h2: h2 <= h1 + 1
 
     while not check_done(current):
+        visited.add(current)
         neighbors = [
             (nx, ny)
             for nx, ny in get_neighbors(current)
@@ -78,9 +79,10 @@ def find_path(terrain: list[list[int]], start: Point, end: Point | None) -> floa
             if this_distance < distances[neighbor]:
                 distances[neighbor] = this_distance
 
-        unvisited.remove(current)
-        # this is slow, presumably there's a better way
-        current = min(unvisited, key=lambda x: distances[x])
+        current = min(
+            [point for point in distances if point not in visited],
+            key=lambda x: distances[x],
+        )
         current_height = terrain[current[1]][current[0]]
 
     return distances[current]
