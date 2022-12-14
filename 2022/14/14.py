@@ -19,6 +19,7 @@ class Grid:
         self.source = source
         self.max_y = max_y
         self.width = (self.max_y + 2) * 2 + 1
+        # our arrays are technically wrapping around, so we keep track of offset for printing
         self.offset = (self.max_y + 2) - self.source[0]
         self.clear_grid()
 
