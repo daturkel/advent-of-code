@@ -156,4 +156,4 @@ if __name__ == "__main__":
     toc = perf_counter()
     time_us = round((toc - tic), 1)
 
-    print(f"({num_dropped_a=}, {num_dropped_b=} {time_us}s)")
+    print(f"{num_dropped_a=}, {num_dropped_b=} ({time_us}s)")
