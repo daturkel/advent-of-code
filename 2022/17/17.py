@@ -97,8 +97,7 @@ if __name__ == "__main__":
     jets = [1 if char == ">" else -1 for char in jets_str]
     grid = Grid(jets)
     ji = 0  # jet_index
-    # piece index
-    for pi in range(2022):
+    for pi in range(2022):  # piece index
         ji = grid.drop(PIECES[pi % len(PIECES)], ji)
         if pi < 5:
             grid.show()
