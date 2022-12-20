@@ -17,7 +17,7 @@ def encrypt(numbers: list[Digit], cipher: list[Digit] | None = None) -> list[Dig
     for digit in numbers:
         val = digit[0]
         idx = cipher.index(digit)
-        _ = cipher.pop(idx)
+        del cipher[idx]
 
         new_idx = (idx + val) % (l - 1)
         cipher.insert(new_idx, digit)
