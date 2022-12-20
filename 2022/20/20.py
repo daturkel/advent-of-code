@@ -6,21 +6,20 @@ from time import perf_counter
 
 Digit = tuple[int, int]
 
+DECRYPTION_KEY = 811589153
 
-def encrypt(numbers: list[Digit]) -> list[Digit]:
-    cipher = numbers.copy()
+
+def encrypt(numbers: list[Digit], cipher: list[Digit] | None = None) -> list[Digit]:
+    if cipher is None:
+        cipher = numbers.copy()
+
     l = len(numbers)
     for digit in numbers:
         val = digit[0]
         idx = cipher.index(digit)
         _ = cipher.pop(idx)
 
-        new_idx_raw = idx + val
-        # handle weird wraparound stuff (new_idx_raw // l is how many times we wrap around)
-        if (new_idx_raw < 0) or (new_idx_raw >= l):
-            new_idx_raw += (new_idx_raw // l)
-
-        new_idx = new_idx_raw % l
+        new_idx = (idx + val) % (l - 1)
         cipher.insert(new_idx, digit)
 
     return cipher
@@ -46,9 +45,16 @@ if __name__ == "__main__":
     numbers = [(val, i) for i, val in enumerate(numbers_int)]
     encrypted = encrypt(numbers)
     coords = get_coords(encrypted)
-    sum_of_coords = sum(coords)
+    part_a = sum(coords)
+
+    numbers = [(DECRYPTION_KEY * val, i) for i, val in enumerate(numbers_int)]
+    encrypted: list[Digit] | None = None
+    for i in range(10):
+        encrypted = encrypt(numbers, encrypted)
+    coords = get_coords(encrypted)
+    part_b = sum(coords)
 
     toc = perf_counter()
     time_us = round((toc - tic), 1)
 
-    print(f"{sum_of_coords=} ({time_us}s)")
+    print(f"{part_a=}, {part_b=} ({time_us}s)")
