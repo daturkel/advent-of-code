@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from dataclasses import dataclass
 import sys
 from time import perf_counter
 
