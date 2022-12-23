@@ -60,8 +60,7 @@ def parse_directions(directions: str) -> list[Literal["R", "L"] | int]:
     direction_list = re.findall(r"(\d+|\D+)", directions)
     for i in range(len(direction_list)):
         try:
-            direction = direction_list[i]
-            direction_list[i] = int(direction)
+            direction_list[i] = int(direction_list[i])
         except ValueError:
             pass
 
