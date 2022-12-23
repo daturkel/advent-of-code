@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from copy import deepcopy
 from collections import defaultdict
 import sys
 from time import perf_counter
