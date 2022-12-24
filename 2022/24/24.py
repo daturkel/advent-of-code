@@ -86,6 +86,8 @@ class Grid:
             storm_pts = self.storm_points_at_t(t + 1)
             neighbors = self.neighbors(current)
             for neighbor in neighbors:
+                # NOTE: A potential speedup is to only check the storms that could possible
+                # interfere with this particular neighbor.
                 if (neighbor not in storm_pts) and ((neighbor, t + 1) not in explored):
                     queue.append((neighbor, t + 1))
                     explored.add((neighbor, t + 1))
