@@ -8,7 +8,6 @@ Point = tuple[int, int]
 Storm = tuple[Point, Point]
 
 DIR_MAP = {"v": (0, 1), "^": (0, -1), "<": (-1, 0), ">": (1, 0)}
-DIR_UNMAP = {(0, 1): "v", (0, -1): "^", (-1, 0): "<", (1, 0): ">"}
 
 
 class Grid:
