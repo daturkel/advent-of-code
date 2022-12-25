@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-from dataclasses import dataclass
 import sys
 from time import perf_counter
+
+# An artifact of a failed attempt before I found a much better solution
 
 Point = tuple[int, ...]
 
@@ -23,61 +24,84 @@ def is_outside(
     point: Point,
     known_inside: set[Point],
     known_outside: set[Point],
+    max_x: int,
+    max_y: int,
+    max_z: int,
     skip: set[Point] | None = None,
 ):
     unknown = []
     if skip is None:
         skip = set()
 
-    for neighbor in get_neighbors(point):
-        if neighbor in skip:
-            continue
-
-        if neighbor in known_outside:
+    inside_neighbors = 0
+    neighbors = [neighbor for neighbor in get_neighbors(point) if neighbor not in skip]
+    for neighbor in neighbors:
+        if (
+            (neighbor in known_outside)
+            or not (0 <= neighbor[0] <= max_x)
+            or not (0 <= neighbor[1] <= max_y)
+            or not (0 <= neighbor[2] <= max_z)
+        ):
+            known_outside.add(neighbor)
             return True, known_inside, known_outside
         elif neighbor in known_inside:
+            inside_neighbors += 1
             continue
         else:
             unknown.append(neighbor)
 
+    if inside_neighbors == len(neighbors):
+        return False, known_inside, known_outside
+
     while unknown:
         this_point = unknown.pop()
+        new_skip = skip.copy()
+        new_skip.add(point)
         outside, known_inside, known_outside = is_outside(
-            this_point, known_inside, known_outside, skip.add(point)
+            this_point, known_inside, known_outside, max_x, max_y, max_z, new_skip
         )
         if outside:
             known_outside.add(this_point)
             return True, known_inside, known_outside
         elif outside is False:
             known_inside.add(this_point)
-        else:
-            unknown.append(this_point)
 
     return False, known_inside, known_outside
 
 
-def parse_input(lines: list[str]) -> int:
+def parse_input(lines: list[str]) -> tuple[int, int]:
     points: set[Point] = set()
-    neighbors: set[Point] = set()
+    neighbors: list[Point] = []
     surface_area_a = 0
     surface_area_b = 0
+
+    max_x = 0
+    max_y = 0
+    max_z = 0
     for line in lines:
         point = tuple(int(char) for char in line.split(","))
+        max_x = max(max_x, point[0])
+        max_y = max(max_y, point[1])
+        max_z = max(max_z, point[2])
         points.add(point)
 
     for point in points:
         for neighbor in get_neighbors(point):
-            neighbors.add(neighbor)
+            neighbors.append(neighbor)
             if neighbor not in points:
                 surface_area_a += 1
 
     # not the most efficient way to do this
     known_inside = set([pt for pt in points])
-    known_outside = set()
-    for point in points:
-        for neighbor in get_neighbors(point):
+    known_outside: set[Point] = set()
+    for neighbor in neighbors:
+        if neighbor in known_inside:
+            continue
+        elif neighbor in known_outside:
+            surface_area_b += 1
+        else:
             outside, known_inside, known_outside = is_outside(
-                neighbor, known_inside, known_outside
+                neighbor, known_inside, known_outside, max_x, max_y, max_z
             )
             if outside:
                 surface_area_b += 1
