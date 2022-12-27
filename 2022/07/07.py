@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from __future__ import annotations
+
 import sys
 from time import perf_counter
 
@@ -9,7 +11,7 @@ REQUIRED = 30000000
 
 class Node:
     # re: weird type hint, see https://bugs.python.org/issue45857
-    def __init__(self, name: str, parent: "Node | None", size: int | None = None):
+    def __init__(self, name: str, parent: Node | None, size: int | None = None):
         self.name = name
         self.parent = parent
         self._size = size
@@ -31,7 +33,7 @@ def find_folders(lines: list[str]) -> tuple[int, int]:
             # go up
             case [_, "cd", ".."]:
                 folder_sizes.append(node.get_size())
-                node = node.parent # type: ignore
+                node = node.parent  # type: ignore
             # add a directory to filesystem
             case [_, "cd", dir_name]:
                 node.children[dir_name] = Node(name=dir_name, parent=node)
