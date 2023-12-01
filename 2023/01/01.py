@@ -22,7 +22,7 @@ def calibrate(lines: list[str]) -> tuple[int, int]:
     values_two = []
     pattern_one = re.compile(r"\d")
     # this is a lookahead which handles overlaps like eightwo -> ["eight", "two"]:
-    # (?=\d|one|two|three|...)
+    # (?=(\d|one|two|three|...))
     pattern_two = re.compile(r"(?=(\d|" + "|".join(NAME_TO_VALUE.keys()) + "))")
     for line in lines:
         digits_one = pattern_one.findall(line)
