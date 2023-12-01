@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import re
 import sys
 from time import perf_counter
