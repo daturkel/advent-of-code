@@ -1,6 +1,4 @@
 import sys
-from functools import reduce
-from operator import mul
 from time import perf_counter
 
 
@@ -12,18 +10,18 @@ def get_possible_and_power(
     for i, game in enumerate(games):
         game = game.split(": ", 1)[1]  # remove "Game N: " prefix
         valid_game = True
-        least_of_color = {"red": 0, "blue": 0, "green": 0}
+        color_min = {"red": 0, "blue": 0, "green": 0}
         for reveal in game.split("; "):  # split into rounds
             for color in reveal.split(", "):  # split into color-number pairs
                 num, color = color.split(" ")  # split color from number
                 num = int(num)
-                if num > least_of_color[color]:
-                    least_of_color[color] = num
+                if num > color_min[color]:
+                    color_min[color] = num
                 if num > max_per_color[color]:
                     valid_game = False
         if valid_game:
             total_possible += i + 1  # assumption that game # is always sequential
-        total_power += reduce(mul, least_of_color.values())
+        total_power += color_min["red"] * color_min["blue"] * color_min["green"]
     return total_possible, total_power
 
 
