@@ -17,7 +17,8 @@ def get_possible_and_power(
                 num = int(num)
                 if num > color_min[color]:
                     color_min[color] = num
-                if num > max_per_color[color]:
+                # don't bother re-checking against max if game is already invalid
+                if valid_game and (num > max_per_color[color]):
                     valid_game = False
         if valid_game:
             total_possible += i + 1  # assumption that game # is always sequential
