@@ -7,7 +7,7 @@ def get_possible_and_power(
 ) -> tuple[int, int]:
     total_possible = 0
     total_power = 0
-    for i, game in enumerate(games):
+    for i, game in enumerate(games, start=1):
         game = game.split(": ", 1)[1]  # remove "Game N: " prefix
         valid_game = True
         color_min = {"red": 0, "blue": 0, "green": 0}
@@ -21,7 +21,7 @@ def get_possible_and_power(
                 if valid_game and (num > max_per_color[color]):
                     valid_game = False
         if valid_game:
-            total_possible += i + 1  # assumption that game # is always sequential
+            total_possible += i  # assumption that game # is always sequential
         total_power += color_min["red"] * color_min["blue"] * color_min["green"]
     return total_possible, total_power
 
