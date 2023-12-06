@@ -30,12 +30,7 @@ def get_ways_to_win(lines: list[str]) -> tuple[int, int]:
 
     total_a = 1
     for time, record in zip(times, records):
-        ways_to_win = 0
-        for charge in range(1, time):
-            time_left = time - charge
-            dist_achieved = charge * time_left
-            if dist_achieved > record:
-                ways_to_win += 1
+        ways_to_win = get_num_solutions(time, record)
         total_a *= ways_to_win
 
     new_time = int("".join(str(num) for num in times))
