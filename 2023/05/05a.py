@@ -28,6 +28,7 @@ def get_location(lines: list[str]) -> int:
                 if source_start <= number <= source_start + length - 1:
                     diff = number - source_start
                     maps[map_idx][source_start + diff] = dest_start + diff
+    # finish up the last mapping
     else:
         maps[map_idx] = add_missing_numbers(current_numbers, maps[map_idx])
 
