@@ -23,6 +23,7 @@ def interval_setminus(this_intvl: intvl, subtract_intvls: list[intvl]) -> list[i
             this_intvl = old_intvls.pop()
             _, diffs = get_overlap_and_diffs(s_intvl, this_intvl)
             # not sure whether there might be duplicates, so using a set just in case
+            # it doesn't seem to impact performance either way
             new_intvls.update(diffs)
 
     return list(new_intvls)
