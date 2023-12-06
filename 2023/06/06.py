@@ -4,7 +4,7 @@ from time import perf_counter
 
 def get_num_solutions(time: int, record: int) -> int:
     """We want to know how many integral solutions there are to
-    (time - charge)*charge ≥ record
+    (time - charge)*charge > record
     So we count the number of integers between the roots of the rewritten quadratic equation:
     -1 * charge^2 + time * charge - record = 0"""
     a = -1
@@ -16,10 +16,14 @@ def get_num_solutions(time: int, record: int) -> int:
     root_1 = (neg_b + discriminant) / denominator
     root_2 = (neg_b - discriminant) / denominator
     # round up for the lower root
-    if root_1 != int(root_1):
-        root_1 = int(root_1 + 1)
+    root_1 = int(root_1 + 1)
     # round down for the higher root
-    root_2 = int(root_2)
+    if root_2 == int(root_2):
+        # if we happened to be exactly an integer, we technically want to go lower since
+        # we have to beat the record, not tie it
+        root_2 = int(root_2 - 1)
+    else:
+        root_2 = int(root_2)
     # return number of solutions
     return root_2 - root_1 + 1
 
