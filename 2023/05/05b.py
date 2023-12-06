@@ -65,6 +65,7 @@ def get_overlap_and_diffs(a: intvl, b: intvl) -> tuple[intvl | None, list[intvl]
     else:
         overlap = None
         diffs = [b]
+    # remove any diffs where the end is less than the start
     diffs = [diff for diff in diffs if diff[0] <= diff[1]]
     return overlap, diffs
 
