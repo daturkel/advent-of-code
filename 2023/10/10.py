@@ -24,6 +24,14 @@ DIR_TO_DXDY = {"N": (0, -1), "S": (0, 1), "E": (1, 0), "W": (-1, 0)}
 Pair = tuple[int, int]
 SetOfPairs = set[Pair]
 
+# If the beginning and end of hitting a border are one of these pairs, you've crossed it
+VALID_CROSSINGS = {
+    frozenset({"|"}),
+    frozenset({"-"}),
+    frozenset({"J", "F"}),
+    frozenset(["L", "7"]),
+}
+
 
 def check_point(
     x: int,
@@ -35,7 +43,9 @@ def check_point(
     width: int,
     height: int,
 ) -> tuple[SetOfPairs, SetOfPairs]:
+    """Returns inside and outside with (x,y) added to one of them"""
     point = (x, y)
+    # ----------------- figure out which direction we should look in ----------------- #
     dw = x
     dn = y
     de = width - x
@@ -49,38 +59,45 @@ def check_point(
         dir_ = "E"
     else:
         dir_ = "S"
-    print(f"piece={lines[y][x]}, {dir_=}")
     dx, dy = DIR_TO_DXDY[dir_]
-    print("---")
+    # ---------------------------- move in that direction ---------------------------- #
     num_crosses = 0
+    in_border = False
+    border_start = None
+    border_end = None
     while True:
         x, y = x + dx, y + dy
         if (0 <= x < width) and (0 <= y < height):
             neighbor = lines[y][x]
+        # if we hit the edge, count the number of times we've crossed to see if we're inside
         else:
             if num_crosses % 2 == 0:
-                print(f"edge, {num_crosses=}, outside")
                 outside.add(point)
             else:
-                print(f"edge, {num_crosses=}, inside")
                 inside.add(point)
-            return outside, inside
+            break
 
+        # shortcuts to stop early if we hit a known outside or known inside
         if ((x, y) in outside) and (num_crosses % 2 == 0):
-            print(f"{neighbor=} outside, outside")
+            # we've crossed an even amount of times and hit a known outside
             outside.add(point)
-            return outside, inside
+            break
         elif ((x, y) in inside) and (num_crosses == 0):
-            print(f"{neighbor=} inside, inside")
+            # we've hit a known inside without any crossings
             inside.add(point)
-            return outside, inside
+            break
         elif (x, y) in border:
-            print(f"{neighbor=} border, {dir_=}")
-            if (dir_ not in PIECE_TO_DIRS[neighbor]) and (
-                neighbor not in DIR_TO_VALID_PIECES[dir_]
-            ):
-                print(f"{neighbor=} border, {dir_=}, crossing")
-                num_crosses += 1
+            if not in_border:
+                border_start = neighbor
+                in_border = True
+            # `dir_ not in PIECES_TO_DIRS[neighbor]` means we're leaving the border because
+            # this border piece doesn't go in the direction we're going
+            if in_border and dir_ not in PIECE_TO_DIRS[neighbor]:
+                border_end = neighbor
+                in_border = False
+                if frozenset({border_start, border_end}) in VALID_CROSSINGS:
+                    num_crosses += 1
+    return outside, inside
 
 
 def solve(raw_lines: str) -> tuple[int, int]:
@@ -123,15 +140,16 @@ def solve(raw_lines: str) -> tuple[int, int]:
     max_distance = int((max(distances.values()) + 1) / 2)
     # ------------------------------------ part 2 ------------------------------------ #
     border = set(distances.keys())
+    border.add((sx, sy))
     outside = set([])
     inside = set([])
     height = len(lines)
 
+    # it might be more efficient to spiral from the outside inward (to be more likely to
+    # stop early for hitting known outside locations), but this is fast enough
     for x in range(width):
         for y in range(height):
-            print(f"point={(x, y)}, piece={lines[y][x]}")
             if (x, y) in border:
-                print("border")
                 continue
             else:
                 outside, inside = check_point(
@@ -139,7 +157,6 @@ def solve(raw_lines: str) -> tuple[int, int]:
                 )
 
     num_inside = len(inside)
-    print(inside)
 
     return max_distance, num_inside
 
@@ -150,8 +167,8 @@ if __name__ == "__main__":
     with open(input_file, "r") as file:
         raw_lines = file.read()
 
-    max_distance, backward = solve(raw_lines)
+    max_distance, num_inside = solve(raw_lines)
     toc = perf_counter()
     time_us = round((toc - tic) * 1000)
 
-    print(f"{max_distance=}, {backward=} ({time_us}ms)")
+    print(f"{max_distance=}, {num_inside=} ({time_us}ms)")
