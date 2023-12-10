@@ -78,13 +78,17 @@ def check_point(
             break
 
         # shortcuts to stop early if we hit a known outside or known inside
-        if ((x, y) in outside) and (num_crosses % 2 == 0):
-            # we've crossed an even amount of times and hit a known outside
-            outside.add(point)
+        if (x, y) in outside:
+            if num_crosses % 2 == 0:
+                outside.add(point)
+            else:
+                inside.add(point)
             break
-        elif ((x, y) in inside) and (num_crosses == 0):
-            # we've hit a known inside without any crossings
-            inside.add(point)
+        elif (x, y) in inside:
+            if num_crosses % 2 == 0:
+                inside.add(point)
+            else:
+                outside.add(point)
             break
         elif (x, y) in border:
             if not in_border:
