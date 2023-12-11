@@ -3,7 +3,7 @@ from itertools import combinations
 from time import perf_counter
 
 
-def solve(lines: list[str]) -> tuple[int, int]:
+def get_distances(lines: list[str]) -> tuple[int, int]:
     height = len(lines[0])
     width = len(lines)
     empty_columns = {col for col in range(width)}
@@ -19,11 +19,14 @@ def solve(lines: list[str]) -> tuple[int, int]:
                 if y in empty_rows:
                     empty_rows.difference_update([y])
     # -------------------------------- adjust galaxies ------------------------------- #
+    # mappings from original coordinates to expanded coordinates
     col_map_a = {col: col for col in range(width)}
     row_map_a = {row: row for row in range(height)}
     col_map_b = {col: col for col in range(width)}
     row_map_b = {row: row for row in range(height)}
+    # for each empty column/row
     for empty_col in empty_columns:
+        # all columns/rows *after* the empty one are pushed outward
         for col in range(empty_col, width):
             col_map_a[col] += 1
             col_map_b[col] += 999999
@@ -51,7 +54,7 @@ if __name__ == "__main__":
     with open(input_file, "r") as file:
         lines = file.read().splitlines()
 
-    max_distance, num_inside = solve(lines)
+    max_distance, num_inside = get_distances(lines)
     toc = perf_counter()
     time_us = round((toc - tic) * 1000)
 
