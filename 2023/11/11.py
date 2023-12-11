@@ -6,8 +6,6 @@ from time import perf_counter
 def solve(lines: list[str]) -> tuple[int, int]:
     height = len(lines[0])
     width = len(lines)
-    col_map = {col: col for col in range(width)}
-    row_map = {row: row for row in range(height)}
     empty_columns = {col for col in range(width)}
     empty_rows = {row for row in range(height)}
     # --------------------------------- find galaxies -------------------------------- #
@@ -21,21 +19,30 @@ def solve(lines: list[str]) -> tuple[int, int]:
                 if y in empty_rows:
                     empty_rows.difference_update([y])
     # -------------------------------- adjust galaxies ------------------------------- #
+    col_map_a = {col: col for col in range(width)}
+    row_map_a = {row: row for row in range(height)}
+    col_map_b = {col: col for col in range(width)}
+    row_map_b = {row: row for row in range(height)}
     for empty_col in empty_columns:
         for col in range(empty_col, width):
-            col_map[col] += 1
+            col_map_a[col] += 1
+            col_map_b[col] += 999999
     for empty_row in empty_rows:
         for row in range(empty_row, height):
-            row_map[row] += 1
-    galaxies = [(col_map[gx], row_map[gy]) for gx, gy in galaxies]
+            row_map_a[row] += 1
+            row_map_b[row] += 999999
     # --------------------------------- get distances -------------------------------- #
-    total_distance = 0
+    total_distance_a = 0
+    total_distance_b = 0
     for (xa, ya), (xb, yb) in combinations(galaxies, 2):
-        dx = abs(xb - xa)
-        dy = abs(yb - ya)
-        total_distance += dx + dy
+        dx_a = abs(col_map_a[xb] - col_map_a[xa])
+        dy_a = abs(row_map_a[yb] - row_map_a[ya])
+        total_distance_a += dx_a + dy_a
+        dx_b = abs(col_map_b[xb] - col_map_b[xa])
+        dy_b = abs(row_map_b[yb] - row_map_b[ya])
+        total_distance_b += dx_b + dy_b
 
-    return total_distance, 0
+    return total_distance_a, total_distance_b
 
 
 if __name__ == "__main__":
