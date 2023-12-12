@@ -9,15 +9,22 @@ def solve(lines: list[str]) -> tuple[int, int]:
     arrangement_sum = 0
     for line in lines:
         row, numbers = line.split(" ")
-        numbers_a = [int(num) for num in numbers.split(",")]
+        numbers = [int(num) for num in numbers.split(",")]
         q_indices = [i for i, char in enumerate(row) if char == "?"]
-        num_missing_qs = sum(numbers_a) - row.count("#")
+        num_missing_qs = sum(numbers) - row.count("#")
+        solutions_dict = {}
+        for combo in combinations(q_indices, num_missing_qs):
+            temp = solutions_dict
+            for key in combo[:-1]:
+                temp = temp.setdefault(key, {})
+            temp[combo[-1]] = None
+
         for new_q_indices in combinations(q_indices, num_missing_qs):
             row_version = "".join(
                 ["#" if i in new_q_indices else char for i, char in enumerate(row)]
             )
             blocks = pattern.findall(row_version)
-            if [len(block) for block in blocks] == numbers_a:
+            if [len(block) for block in blocks] == numbers:
                 arrangement_sum += 1
 
     return arrangement_sum, 0
