@@ -12,12 +12,6 @@ def solve(lines: list[str]) -> tuple[int, int]:
         numbers = [int(num) for num in numbers.split(",")]
         q_indices = [i for i, char in enumerate(row) if char == "?"]
         num_missing_qs = sum(numbers) - row.count("#")
-        solutions_dict = {}
-        for combo in combinations(q_indices, num_missing_qs):
-            temp = solutions_dict
-            for key in combo[:-1]:
-                temp = temp.setdefault(key, {})
-            temp[combo[-1]] = None
 
         for new_q_indices in combinations(q_indices, num_missing_qs):
             row_version = "".join(
