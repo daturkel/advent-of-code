@@ -104,6 +104,7 @@ def solve(lines: list[str]) -> tuple[int, int]:
         arrangements_a = solve_line(line, 1, pattern)
         arrangement_list_a.append(arrangements_a)
 
+        # this solution works in theory but is too slow for part 2
         # arrangements_b = solve_line(line, 5, pattern)
         # arrangement_list_b.append(arrangements_b)
 
