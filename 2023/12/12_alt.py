@@ -104,8 +104,8 @@ def solve(lines: list[str]) -> tuple[int, int]:
         arrangements_a = solve_line(line, 1, pattern)
         arrangement_list_a.append(arrangements_a)
 
-        arrangements_b = solve_line(line, 5, pattern)
-        arrangement_list_b.append(arrangements_b)
+        # arrangements_b = solve_line(line, 5, pattern)
+        # arrangement_list_b.append(arrangements_b)
 
     return sum(arrangement_list_a), sum(arrangement_list_b)
 
