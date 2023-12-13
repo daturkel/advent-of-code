@@ -16,7 +16,6 @@ class BranchingDict:
         try:
             temp[path[-1]] = None
         except IndexError:
-            print(path)
             exit()
 
     def get(self, path: Sequence[int]) -> dict | None:
@@ -54,8 +53,6 @@ def solve_line(line: str, multiplier: int, pattern: re.Pattern) -> int:
     solution_tree = BranchingDict()
     if num_missing_qs == 0:
         return 1
-    print(len(q_indices))
-    print(num_missing_qs)
     for combo in combinations(q_indices, num_missing_qs):
         solution_tree.add(combo)
 
