@@ -14,41 +14,24 @@ class Grid:
                     self.stones.append((x, y))
         self.num_stones = len(self.stones)
 
-    def print(self, highlight: tuple[int, int] | None = None):
-        rep = []
-        if highlight is None:
-            highlight = (-1, -1)
-        for y, row in enumerate(self._grid):
-            for x, char in enumerate(row):
-                if (x, y) == highlight:
-                    rep.append("@")
-                else:
-                    rep.append(char)
-            rep.append("\n")
-        print("".join(rep))
+    def __str__(self) -> str:
+        return "".join(["".join(row) for row in self._grid])
 
-    def shift(self, horizontal: bool, negative: bool) -> bool:
-        moved = 0
+    def shift(self, horizontal: bool, negative: bool):
         self.stones = sorted(
             self.stones, key=lambda x: x[~horizontal], reverse=not negative
         )
         for i in range(self.num_stones):
             stone = self.stones[i]
             new_stone = self.shift_stone(stone, horizontal, negative)
-            if stone != new_stone:
-                moved += 1
             self.stones[i] = new_stone
 
-        return moved > 0
-
-    def spin_cycle(self, full: bool = True) -> bool:
-        movement = False
+    def spin_cycle(self, full: bool = True):
         if full:
-            movement = movement or self.shift(False, True)  # N
-        movement = movement or self.shift(True, True)  # W
-        movement = movement or self.shift(False, False)  # S
-        movement = movement or self.shift(True, False)  # E
-        return movement
+            self.shift(False, True)  # N
+        self.shift(True, True)  # W
+        self.shift(False, False)  # S
+        self.shift(True, False)  # E
 
     def shift_stone(
         self, stone: tuple[int, int], horizontal: bool, negative: bool
@@ -80,17 +63,26 @@ class Grid:
 
 def solve(lines: list[str]) -> tuple[int, int]:
     grid = Grid(lines)
+    history = [str(grid)]
     grid.shift(horizontal=False, negative=True)
     north_load = grid.north_load()
-    # grid.spin_cycle(full=False)
-    # for i in range(1000000000 - 1):
-    #     check = i % 100000 == 0
-    #     if check:
-    #         print(f"{i=}")
-    #     moving = grid.spin_cycle()
-    #     if not moving:
-    #         break
-    north_load_spun = grid.north_load()
+    grid.spin_cycle(full=False)
+    history.append(str(grid))
+    while True:
+        grid.spin_cycle()
+        if str(grid) in history:
+            loop_point = history.index(str(grid))
+            break
+        else:
+            history.append(str(grid))
+
+    billion = 1000000000
+    loop_length = len(history) - loop_point
+    grid_idx = loop_point + ((billion - loop_point) % loop_length)
+    str_at_billion = history[grid_idx]
+    grid_at_billion = Grid(str_at_billion.splitlines())
+    north_load_spun = grid_at_billion.north_load()
+
     return north_load, north_load_spun
 
 
