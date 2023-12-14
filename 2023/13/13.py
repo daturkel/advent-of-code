@@ -55,8 +55,8 @@ if __name__ == "__main__":
     with open(input_file, "r") as file:
         lines = file.read().splitlines()
 
-    calibration_one, calibration_two = solve(lines)
+    folds_one, folds_two = solve(lines)
     toc = perf_counter()
     time_us = round((toc - tic) * 1000)
 
-    print(f"{calibration_one=}, {calibration_two=} ({time_us}ms)")
+    print(f"{folds_one=}, {folds_two=} ({time_us}ms)")
