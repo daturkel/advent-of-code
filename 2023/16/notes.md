@@ -4,3 +4,5 @@ I replaced the list comprehension by just keeping track of two different sets: o
 doing `if dir_ in cache[point]` will actually *insert* the key `point` into `cache`, which could mess up my count of keys in the end. Instead, I do: `if dir in cache.get(point,[])` to avoid doing that extra key insertion.
 
 I tried to do a version that cached outcomes *between* runs for part 2 (i.e. a cache from one starting point that can be reused for other starting points by keeping track of all the points you will energize if you start here and move in that direction), but this turned into a mess and didn't work. It requires recursing for every single step forward, so it would've likely hit python recursion  limits anyway.
+
+Attempts to leverage the cache for *every* step (not just recursions into pipes) didn't seem to speed anything up, I'm not sure why.

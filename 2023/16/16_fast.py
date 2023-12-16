@@ -34,6 +34,9 @@ def follow_beam(
     x, y = start
     dx, dy = direction
     while (0 <= x < width) and (0 <= y < height):
+        # this optimization didn't make a difference
+        # if (dx, dy) in cache.get((x, y), []):
+        #     break
         cache[(x, y)].append((dx, dy))
         directions = INTERACTIONS[grid[y][x]][(dx, dy)]
         try:
