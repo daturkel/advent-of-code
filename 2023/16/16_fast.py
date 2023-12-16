@@ -21,52 +21,60 @@ INTERACTIONS: dict[str, dict[Point, list[Point]]] = {
 
 def follow_beam(
     grid: list[str],
+    width: int,
+    height: int,
     start: Point,
     direction: Point,
-    cache: DefaultDict[Point, set] | None = None,
-) -> int:
+    cache: DefaultDict[Point, list] | None = None,
+) -> int | None:
+    calculate_length = False
     if cache is None:
-        cache = defaultdict(set)
-    width = len(grid[0])
-    height = len(grid)
+        cache = defaultdict(list)
+        calculate_length = True
     x, y = start
     dx, dy = direction
     while (0 <= x < width) and (0 <= y < height):
-        cache[(x, y)].add((dx, dy))
+        cache[(x, y)].append((dx, dy))
         directions = INTERACTIONS[grid[y][x]][(dx, dy)]
-        if len(directions) == 1:
-            dx, dy = directions[0]
-            x += dx
-            y += dy
-        else:
+        try:
             dxa, dya = directions[0]
             dxb, dyb = directions[1]
             start_a = (x + dxa, y + dya)
             start_b = (x + dxb, y + dyb)
             if start_a not in cache or (dxa, dya) not in cache[start_a]:
-                _ = follow_beam(grid, start_a, directions[0], cache)
+                _ = follow_beam(grid, width, height, start_a, directions[0], cache)
             if start_b not in cache or (dxb, dyb) not in cache[start_b]:
-                _ = follow_beam(grid, start_b, directions[1], cache)
+                _ = follow_beam(grid, width, height, start_b, directions[1], cache)
             break
+        except IndexError:
+            dx, dy = directions[0]
+            x += dx
+            y += dy
 
-    return len(cache)
+    # no need to run len on any but the outermost call
+    if calculate_length:
+        return len(cache)
 
 
 def solve(grid: list[str]) -> tuple[int, int]:
-    energized_spots_a = follow_beam(grid, (0, 0), (1, 0))
-    energized_spots_list = []
     width = len(grid[0])
     height = len(grid)
+    energized_spots_a = follow_beam(grid, width, height, (0, 0), (1, 0))
+    energized_spots_list = []
     for i in range(width):
         # top going south
-        energized_spots_list.append(follow_beam(grid, (i, 0), (0, 1)))
+        energized_spots_list.append(follow_beam(grid, width, height, (i, 0), (0, 1)))
         # bottom going north
-        energized_spots_list.append(follow_beam(grid, (i, height - 1), (0, -1)))
+        energized_spots_list.append(
+            follow_beam(grid, width, height, (i, height - 1), (0, -1))
+        )
     for i in range(height):
         # left going east
-        energized_spots_list.append(follow_beam(grid, (0, i), (1, 0)))
+        energized_spots_list.append(follow_beam(grid, width, height, (0, i), (1, 0)))
         # right going west
-        energized_spots_list.append(follow_beam(grid, (width - 1, i), (-1, 0)))
+        energized_spots_list.append(
+            follow_beam(grid, width, height, (width - 1, i), (-1, 0))
+        )
     return energized_spots_a, max(energized_spots_list)
 
 
