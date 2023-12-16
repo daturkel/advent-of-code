@@ -26,7 +26,7 @@ def follow_beam(
     start: Point,
     direction: Point,
     cache: DefaultDict[Point, list] | None = None,
-) -> int | None:
+) -> int:
     calculate_length = False
     if cache is None:
         cache = defaultdict(list)
@@ -54,6 +54,7 @@ def follow_beam(
     # no need to run len on any but the outermost call
     if calculate_length:
         return len(cache)
+    return 0
 
 
 def solve(grid: list[str]) -> tuple[int, int]:
