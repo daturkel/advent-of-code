@@ -1,0 +1,3 @@
+Kind of messed up that they give easy problems on weekends and hard problems on weekdays...
+
+This one pretty much spells out how to solve it in the problem statement, with the diagram kind of telling you exactly what steps to follow. All I do is build up a "buffer" of differences, then I work backwards through the buffer using each to extrapolate the next value for the next. Part two is the same, just with minor modifications to move backwards.

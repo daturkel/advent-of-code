@@ -1,0 +1,5 @@
+A pleasant day. For part 1, implementing the HASH algorithm is straight forward, just follow the instructions.
+
+For part two, I take advantage of the fact that python dictionaries are ordered. I have one dictionary containing all boxes (though this could've just an array of dictionaries too) and then each box is a dictionary mapping labels to focal length. If we want to overwrite a label, we just do `box[label] = focal_length` and it'll overwrite (or add) that focal_length to the dictionary, *moving it to the end of the list of keys automatically*. If we want to remove a label, we just do `del box[label]`.
+
+Getting the focusing power is just a matter of iterating through the boxes and iterating through each boxes contents and following the formula. We can iterate through the boxes contents in order thanks to python's naturally ordered dictionaries.

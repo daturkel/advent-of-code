@@ -1,0 +1,1 @@
+A surprisingly easy day. All we're doing is counting the number of intersecting numbers in two sets and then doing something with that count. Nothing particularly interesting in the solution but I did learn that enumerate can take a `start` kwarg which lets you pick where the index counter starts.

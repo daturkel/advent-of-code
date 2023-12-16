@@ -1,0 +1,1 @@
+A much easier day...if we break out numpy. I simply check each pivot point, do some fancy numpy indexing and flipping, then check how many cells are *not* equal. If it's 0, then that's a fold for part 1. If it's 1, then that's a fold for part 2.
