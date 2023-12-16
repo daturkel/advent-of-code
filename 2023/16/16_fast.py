@@ -41,9 +41,9 @@ def follow_beam(
             dxb, dyb = directions[1]
             start_a = (x + dxa, y + dya)
             start_b = (x + dxb, y + dyb)
-            if start_a not in cache or (dxa, dya) not in cache[start_a]:
+            if (dxa, dya) not in cache.get(start_a, []):
                 _ = follow_beam(grid, width, height, start_a, directions[0], cache)
-            if start_b not in cache or (dxb, dyb) not in cache[start_b]:
+            if (dxb, dyb) not in cache.get(start_b, []):
                 _ = follow_beam(grid, width, height, start_b, directions[1], cache)
             break
         except IndexError:
