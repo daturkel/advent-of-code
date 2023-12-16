@@ -72,6 +72,6 @@ if __name__ == "__main__":
 
     energized_tiles, new_ways_to_win = solve(lines)
     toc = perf_counter()
-    time_us = round((toc - tic) * 1000)
+    time_us = round((toc - tic))
 
-    print(f"{energized_tiles=}, {new_ways_to_win=} ({time_us}ms)")
+    print(f"{energized_tiles=}, {new_ways_to_win=} ({time_us}s)")
