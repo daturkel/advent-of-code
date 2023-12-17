@@ -3,6 +3,7 @@ from __future__ import annotations
 import sys
 from collections import defaultdict
 from heapq import heappop, heappush
+from itertools import count
 from time import perf_counter
 from typing import NamedTuple
 
@@ -13,25 +14,29 @@ class PriorityQueue:
     def __init__(self):
         self._pq = []
         self.lookup = {}
+        self._counter = count()
 
     def add_update(self, node, priority):
         if node in self.lookup:
             self.remove(node)
-        entry = [priority, node]
+        entry = [priority, next(self._counter), node]
         self.lookup[node] = entry
         heappush(self._pq, entry)
 
     def remove(self, node):
         entry = self.lookup.pop(node)
-        entry[0] = None
+        entry[2] = None
 
     def pop(self):
         while self._pq:
-            priority, node = heappop(self._pq)
+            priority, _, node = heappop(self._pq)
             if node is not None:
                 del self.lookup[node]
                 return node
         raise KeyError("pop from empty pq")
+
+    def get(self, node):
+        return self.lookup[node][0]
 
 
 # point, direction we're moving, and steps from that direction
@@ -62,52 +67,38 @@ def get_neighbors(node: Node, width: int, height: int) -> list[Node]:
     return neighbors
 
 
-def dijkstra(start: Point, end: Point, grid: list[list[int]]) -> tuple[int, dict, Node]:
+def dijkstra(start: Point, end: Point, grid: list[list[int]]) -> int:
     distances = defaultdict(lambda: float("inf"))
-    current_node = Node(start, "", 0)
+    pq = PriorityQueue()
     width = len(grid[0])
     height = len(grid)
-    # for direction in ["E", "W", "N", "S"]:
-    #     for steps in [1, 2, 3]:
-    #         for x in range(width):
-    #             for y in range(height):
-    #                 distances[Node((x, y), direction, steps)] = float("inf")
-    visited = set()
-
+    for direction in ["E", "W", "N", "S"]:
+        for steps in [1, 2, 3]:
+            for x in range(width):
+                for y in range(height):
+                    node = Node((x, y), direction, steps)
+                    pq.add_update(node, float("inf"))
+    current_node = Node(start, "", 0)
     distances[current_node] = 0
-    prev = {}
 
     while True:
-        visited.add(current_node)
         current_distance = distances[current_node]
         for neighbor_node in get_neighbors(current_node, width, height):
             nx, ny = neighbor_node.point
             possible_distance = current_distance + grid[ny][nx]
             if possible_distance < distances[neighbor_node]:
                 distances[neighbor_node] = possible_distance
-                prev[neighbor_node] = current_node
+                pq.add_update(neighbor_node, possible_distance)
                 if (nx, ny) == end:
-                    return int(possible_distance), prev, neighbor_node
-        current_node = min(
-            [node for node in distances if node not in visited],
-            key=lambda k: distances[k],
-        )
+                    return int(possible_distance)
+        current_node = pq.pop()
 
 
 def solve(lines: list[str]) -> tuple[int, int]:
     grid = [[int(char) for char in row] for row in lines]
     start = (0, 0)
     end = (len(grid[0]) - 1, len(grid) - 1)
-    min_heat_loss, prev, end_node = dijkstra(start, end, grid)
-    current = end_node
-    print("solved")
-    while current.point != start:
-        x, y = current.point
-        grid[y][x] = "*"  # type: ignore
-        current = prev[current]
-
-    for row in grid:
-        print("".join([str(num) for num in row]))
+    min_heat_loss = dijkstra(start, end, grid)
 
     return min_heat_loss, 0
 
