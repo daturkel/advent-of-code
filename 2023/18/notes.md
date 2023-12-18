@@ -1,0 +1,1 @@
+For today, I copied my logic from day 10 for detecting inner and outer pieces, though instead of starting at a point and heading outward, I just scan left to right on each row. This works, but it's way too slow for part 2.
