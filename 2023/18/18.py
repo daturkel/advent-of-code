@@ -15,14 +15,13 @@ def get_len_border_and_area(instructions: list[tuple[str, int]]) -> tuple[int, i
         direction, amount = instructions[i]
         dx, dy = DIRECTIONS[direction]
         amount = int(amount)
-        for i in range(1, amount + 1):
-            len_border += 1
-            old_x = x
-            old_y = y
-            x = x + dx
-            y = y + dy
-            # who knew! https://en.wikipedia.org/wiki/Shoelace_formula#Trapezoid_formula
-            area += (old_y + y) * (old_x - x)
+        len_border += amount
+        old_x = x
+        old_y = y
+        x = x + dx * amount
+        y = y + dy * amount
+        # who knew! https://en.wikipedia.org/wiki/Shoelace_formula#Trapezoid_formula
+        area += (old_y + y) * (old_x - x)
 
     # len_border - 1 to remove duplicate first point
     return len_border - 1, int(area / 2)
@@ -59,6 +58,6 @@ if __name__ == "__main__":
 
     volume_a, volume_b = solve(lines)
     toc = perf_counter()
-    time_us = round((toc - tic), 1)
+    time_us = round((toc - tic) * 1000000)
 
-    print(f"{volume_a=}, {volume_b=} ({time_us}s)")
+    print(f"{volume_a=}, {volume_b=} ({time_us}µs)")
