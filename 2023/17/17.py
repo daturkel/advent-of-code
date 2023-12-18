@@ -5,7 +5,7 @@ from collections import defaultdict
 from heapq import heappop, heappush
 from itertools import count
 from time import perf_counter
-from typing import NamedTuple
+from typing import Callable, NamedTuple
 
 Point = tuple[int, int]
 
@@ -50,7 +50,7 @@ DIRECTIONS = {"E": (1, 0), "W": (-1, 0), "N": (0, -1), "S": (0, 1)}
 OPPOSITES = {"E": "W", "W": "E", "N": "S", "S": "N", "": ""}
 
 
-def get_neighbors(node: Node, width: int, height: int) -> list[Node]:
+def get_neighbors_a(node: Node, width: int, height: int) -> list[Node]:
     x, y = node.point
     neighbors = []
 
@@ -61,13 +61,38 @@ def get_neighbors(node: Node, width: int, height: int) -> list[Node]:
             continue
         if (direction == node.direction) and (node.steps < 3):
             neighbors.append(Node((x + dx, y + dy), direction, node.steps + 1))
-        elif direction != node.direction:
+        if direction != node.direction:
             neighbors.append(Node((x + dx, y + dy), direction, 1))
 
     return neighbors
 
 
-def dijkstra(start: Point, end: Point, grid: list[list[int]]) -> int:
+def get_neighbors_b(node: Node, width: int, height: int) -> list[Node]:
+    x, y = node.point
+    neighbors = []
+
+    for direction, (dx, dy) in DIRECTIONS.items():
+        if direction == OPPOSITES[node.direction]:
+            continue
+        if not (0 <= x + dx < width) or not (0 <= y + dy < height):
+            continue
+        if (direction == node.direction) and (node.steps < 10):
+            neighbors.append(Node((x + dx, y + dy), direction, node.steps + 1))
+        elif (direction != node.direction) and (node.steps >= 4):
+            neighbors.append(Node((x + dx, y + dy), direction, 1))
+        elif node.direction == "":
+            neighbors.append(Node((x + dx, y + dy), direction, 1))
+
+    return neighbors
+
+
+def dijkstra(
+    start: Point,
+    end: Point,
+    grid: list[list[int]],
+    neighbor_fn: Callable[[Node, int, int], list[Node]],
+    min_stop: int = 0,
+) -> int:
     distances = defaultdict(lambda: float("inf"))
     pq = PriorityQueue()
     width = len(grid[0])
@@ -78,13 +103,13 @@ def dijkstra(start: Point, end: Point, grid: list[list[int]]) -> int:
 
     while True:
         current_distance = distances[current_node]
-        for neighbor_node in get_neighbors(current_node, width, height):
+        for neighbor_node in neighbor_fn(current_node, width, height):
             nx, ny = neighbor_node.point
             possible_distance = current_distance + grid[ny][nx]
             if possible_distance < distances[neighbor_node]:
                 distances[neighbor_node] = possible_distance
                 pq.add_update(neighbor_node, possible_distance)
-                if (nx, ny) == end:
+                if ((nx, ny) == end) and (neighbor_node.steps > min_stop):
                     return int(possible_distance)
         current_node = pq.pop()
 
@@ -93,9 +118,10 @@ def solve(lines: list[str]) -> tuple[int, int]:
     grid = [[int(char) for char in row] for row in lines]
     start = (0, 0)
     end = (len(grid[0]) - 1, len(grid) - 1)
-    min_heat_loss = dijkstra(start, end, grid)
+    min_heat_loss = dijkstra(start, end, grid, get_neighbors_a)
+    min_heat_loss_ultra = dijkstra(start, end, grid, get_neighbors_b, 4)
 
-    return min_heat_loss, 0
+    return min_heat_loss, min_heat_loss_ultra
 
 
 if __name__ == "__main__":
@@ -106,6 +132,6 @@ if __name__ == "__main__":
 
     min_heat_loss, new_ways_to_win = solve(lines)
     toc = perf_counter()
-    time_us = round((toc - tic) * 1000)
+    time_us = round((toc - tic), 1)
 
-    print(f"{min_heat_loss=}, {new_ways_to_win=} ({time_us}ms)")
+    print(f"{min_heat_loss=}, {new_ways_to_win=} ({time_us}s)")
