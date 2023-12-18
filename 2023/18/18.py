@@ -24,17 +24,14 @@ BORDERS_GOING_EAST = {"L", "F", "-"}
 HEX_TO_DIRECTION = {"0": "R", "1": "D", "2": "L", "3": "U"}
 
 
-def get_grid(instructions: list[tuple[str, int]]) -> list[list[str]]:
+def get_grid(
+    instructions: list[tuple[str, int]]
+) -> tuple[dict[tuple[int, int], str], int, int]:
     points = [(0, 0)]
-    xmax = 0
-    ymax = 0
-    xmin = 0
-    ymin = 0
     x, y = points[0]
     n_lines = len(instructions)
     point_lookup = {}
     for i in range(n_lines):
-        print(i)
         last_direction = instructions[(i - 1) % n_lines][0]
         direction, amount = instructions[i]
         dx, dy = DIRECTIONS[direction]
@@ -47,34 +44,34 @@ def get_grid(instructions: list[tuple[str, int]]) -> list[list[str]]:
                 point_lookup[(x, y)] = "-"
             else:
                 point_lookup[(x, y)] = "|"
-            xmin = min(x, xmin)
-            ymin = min(y, ymin)
-            xmax = max(x, xmax)
-            ymax = max(y, ymax)
             points.append((x, y))
     point_lookup[(0, 0)] = POINT_TYPE[(instructions[-1][0], instructions[0][0])]
 
+    xs = [point[0] for point in points]
+    ys = [point[1] for point in points]
+    xmin = min(xs)
+    ymin = min(ys)
+    xmax = max(xs)
+    ymax = max(ys)
     width = xmax - xmin + 1
     height = ymax - ymin + 1
 
-    grid = [["."] * width for _ in range(height)]
-    for x, y in points:
-        grid[y - ymin][x - xmin] = point_lookup.get((x, y), "#")
+    grid = {}
+    for i, (x, y) in enumerate(points):
+        grid[(x - xmin, y - ymin)] = point_lookup[(x, y)]
 
-    return grid
+    return grid, width, height
 
 
-def get_filled_grid_size(grid: list[list[str]]) -> int:
+def get_filled_grid_size(grid: dict[tuple[int, int], str], width, height) -> int:
     total = 0
-    width = len(grid[0])
-    height = len(grid)
     for y in range(height):
         inside = False
         in_border = False
         border_start = ""
         border_end = ""
         for x in range(width):
-            char = grid[y][x]
+            char = grid.get((x, y), ".")
             if char != ".":
                 total += 1
                 if not in_border:
@@ -87,26 +84,22 @@ def get_filled_grid_size(grid: list[list[str]]) -> int:
                         inside = not inside
             elif inside:
                 total += 1
-                grid[y][x] = "*"
 
     return total
 
 
 def solve(lines: list[str]) -> tuple[int, int]:
     instructions_a = [(line.split()[0], int(line.split()[1])) for line in lines]
-    grid = get_grid(instructions_a)
-    filled_grid_size = get_filled_grid_size(grid)
-    # for row in grid:
-    #     print("".join(row))
-    instructions_b = []
-    for line in lines:
-        hex_part = line.split("#")[1]
-        amount = int(hex_part[:-2], 16)
-        direction = HEX_TO_DIRECTION[hex_part[-2]]
-        instructions_b.append((direction, amount))
-    grid = get_grid(instructions_b)
-    print("built second grid")
-    filled_grid_size = get_filled_grid_size(grid)
+    grid, width, height = get_grid(instructions_a)
+    filled_grid_size = get_filled_grid_size(grid, width, height)
+    # instructions_b = []
+    # for line in lines:
+    #     hex_part = line.split("#")[1]
+    #     amount = int(hex_part[:-2], 16)
+    #     direction = HEX_TO_DIRECTION[hex_part[-2]]
+    #     instructions_b.append((direction, amount))
+    # grid, width, height = get_grid(instructions_b)
+    # filled_grid_size = get_filled_grid_size(grid, width, height)
 
     return filled_grid_size, 0
 
