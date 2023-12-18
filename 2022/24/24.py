@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from collections import deque
 import sys
+from collections import deque
 from time import perf_counter
 
 Point = tuple[int, int]
@@ -86,7 +86,7 @@ class Grid:
             storm_pts = self.storm_points_at_t(t + 1)
             neighbors = self.neighbors(current)
             for neighbor in neighbors:
-                # NOTE: A potential speedup is to only check the storms that could possible
+                # NOTE: A potential speedup is to only check the storms that could possibly
                 # interfere with this particular neighbor.
                 if (neighbor not in storm_pts) and ((neighbor, t + 1) not in explored):
                     queue.append((neighbor, t + 1))
