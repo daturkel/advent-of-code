@@ -72,13 +72,8 @@ def dijkstra(start: Point, end: Point, grid: list[list[int]]) -> int:
     pq = PriorityQueue()
     width = len(grid[0])
     height = len(grid)
-    for direction in ["E", "W", "N", "S"]:
-        for steps in [1, 2, 3]:
-            for x in range(width):
-                for y in range(height):
-                    node = Node((x, y), direction, steps)
-                    pq.add_update(node, float("inf"))
     current_node = Node(start, "", 0)
+    pq.add_update(current_node, float("inf"))
     distances[current_node] = 0
 
     while True:
