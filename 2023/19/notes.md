@@ -1,0 +1,1 @@
+Today was mostly just parsing. I got stuck forever due to the cursed late-binding closure issue when defining my workflow functions and had to create factory functions to create the functions.
