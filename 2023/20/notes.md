@@ -1,0 +1,1 @@
+Not too bad once I figured out that we had to use a deque to manage the pulses in the order they're emitted.
