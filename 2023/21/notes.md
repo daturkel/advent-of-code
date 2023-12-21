@@ -1,0 +1,1 @@
+Part a isn't too tricky. The key insight is that any spot we visit on an even number of steps can be a final spot, and any spot we visit on an odd number of steps cannot.
