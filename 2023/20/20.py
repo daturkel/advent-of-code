@@ -80,30 +80,19 @@ def solve(lines: list[str]) -> tuple[int, int]:
 
     pulse_counter = {False: 0, True: 0}
     queue = deque()
-    pulses_after_1000 = None
-    presses_til_done = None
-    i = 0
-    while True:
-        i += 1
+    for i in range(1000):
         queue.append((False, "broadcaster", "button"))
         while queue:
             high, destination, source = queue.popleft()
             pulse_counter[high] += 1
-            if (not high) and (destination == "rx") and (presses_til_done is None):
-                print("ok")
-                presses_til_done = i
-                break
             result = nodes[destination].pulse(high, source)
             if result is not None:
                 for child in nodes[destination].children:
                     queue.append((result, child, destination))
-        if i == 1000:
-            pulses_after_1000 = pulse_counter[False] * pulse_counter[True]
-            print(pulses_after_1000)
-        if presses_til_done:
-            break
 
-    return pulses_after_1000, presses_til_done  # type: ignore
+    pulses_after_1000 = pulse_counter[False] * pulse_counter[True]
+
+    return pulses_after_1000, 0
 
 
 if __name__ == "__main__":
