@@ -85,12 +85,12 @@ def solve(lines: list[str]) -> tuple[int, int]:
         else:
             parts.append(get_part(line))
 
-    total = 0
+    sum_accepted = 0
     for part in parts:
         accept = accept_part(workflows, part)
         if accept:
-            total += sum(part.values())
-    return total, 0
+            sum_accepted += sum(part.values())
+    return sum_accepted, 0
 
 
 if __name__ == "__main__":
@@ -99,8 +99,8 @@ if __name__ == "__main__":
     with open(input_file, "r") as file:
         lines = file.read().splitlines()
 
-    volume_a, volume_b = solve(lines)
+    sum_accepted, possible_accepted = solve(lines)
     toc = perf_counter()
     time_us = round((toc - tic) * 1000000)
 
-    print(f"{volume_a=}, {volume_b=} ({time_us}µs)")
+    print(f"{sum_accepted=}, {possible_accepted=} ({time_us}µs)")
