@@ -103,7 +103,7 @@ def solve(lines: list[str]) -> tuple[int, int]:
         if presses_til_done:
             break
 
-    return pulses_after_1000, presses_til_done
+    return pulses_after_1000, presses_til_done  # type: ignore
 
 
 if __name__ == "__main__":
