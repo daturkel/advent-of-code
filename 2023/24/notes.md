@@ -1,0 +1,1 @@
+Part a isn't so bad: we rewrite every trajectory in mx+b form and keep track of m, b, the starting x position and the x velocity. Then we solve each pair of equations and check if the solution is within the bounds and use x0 and vx to check if the solution is in the *past* or not.
