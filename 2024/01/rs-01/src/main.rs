@@ -6,12 +6,7 @@ use std::time::Instant;
 
 fn main() -> io::Result<()> {
     let start = Instant::now();
-    let args: Vec<String> = env::args().collect();
-    let path = if args.len() > 1 {
-        &args[1]
-    } else {
-        "../test.txt"
-    };
+    let path = env::args().nth(1).unwrap_or("../test.txt".to_string());
     let file = File::open(path)?;
     let reader = io::BufReader::new(file);
     let (mut first_numbers, mut second_numbers): (Vec<i32>, Vec<i32>) = reader
@@ -23,8 +18,9 @@ fn main() -> io::Result<()> {
     // part 1
     first_numbers.sort_unstable(); // faster than sort
     second_numbers.sort_unstable();
-    let mut counts_1: HashMap<i32, i32> = HashMap::new();
-    let mut counts_2: HashMap<i32, i32> = HashMap::new();
+    let length = first_numbers.len();
+    let mut counts_1: HashMap<i32, i32> = HashMap::with_capacity(length); // preallocate for speed
+    let mut counts_2: HashMap<i32, i32> = HashMap::with_capacity(length);
 
     let total_distance: i32 = first_numbers
         .iter()
