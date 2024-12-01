@@ -21,8 +21,8 @@ fn main() -> io::Result<()> {
         .unzip();
 
     // part 1
-    first_numbers.sort();
-    second_numbers.sort();
+    first_numbers.sort_unstable(); // faster than sort
+    second_numbers.sort_unstable();
     let mut counts_1: HashMap<i32, i32> = HashMap::new();
     let mut counts_2: HashMap<i32, i32> = HashMap::new();
 
@@ -43,8 +43,8 @@ fn main() -> io::Result<()> {
         total += count * number * *counts_2.entry(number).or_default()
     }
     println!("similarity is {}", total);
-    let end = Instant::now();
-    println!("Done in {} ms", (end - start).as_millis());
+    let duration = start.elapsed().as_millis();
+    println!("Done in {} ms", duration);
     Ok(())
 }
 
