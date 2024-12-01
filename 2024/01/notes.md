@@ -1,0 +1,1 @@
+Nothing particularly challenging on day 1: sort two lists and count the elementwise absolute distance between the sorted values, then also count how many times each item in list 1 appears in list 2 (which we do with a defaultdict).
