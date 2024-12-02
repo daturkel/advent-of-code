@@ -7,22 +7,17 @@ def get_invalid_index(report: list[str]) -> tuple[bool, list[int]]:
     # second return value is an index which could make it valid if removed
     last = None
     sign = None
-    # print("---")
-    # print(report)
     for i, num in enumerate(report):
         num = int(num)
-        # print(num)
         if last is not None:
             diff = last - num
             if diff == 0:
-                # print("dupe")
                 return False, [i]
             elif not (1 <= abs(diff) <= 3):
-                # print("diff problem ")
                 return False, [i - 1, i]
             new_sign = diff > 0
             if (sign is not None) and (sign != new_sign):
-                # print("sign problem")
+                # i thought this should be [i-2, i-1, i], but [i-2, i] seems to work
                 return False, [i - 2, i]
             sign = new_sign
         last = num
@@ -36,7 +31,6 @@ def solve(reports: list[str]) -> tuple[int, int]:
         report = report.split()
         is_valid, index_to_remove = get_invalid_index(report)
         if is_valid:
-            # print(report, " is safe")
             safe += 1
             alt_safe += 1
         elif index_to_remove is not None:
@@ -44,15 +38,8 @@ def solve(reports: list[str]) -> tuple[int, int]:
                 new_report = report[:index] + report[index + 1 :]
                 is_valid, _ = get_invalid_index(new_report)
                 if is_valid:
-                    # print(report, " is unsafe but ", new_report, " is safe")
                     alt_safe += 1
                     break
-            else:
-                ...
-                # print(report, " is always unsafe")
-        else:
-            ...
-            # print(report, "is always unsafe")
 
     return safe, alt_safe
 
