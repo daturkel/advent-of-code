@@ -31,16 +31,17 @@ fn main() -> io::Result<()> {
             (first - second).abs()
         })
         .sum();
-    println!("distance is {}", total_distance);
 
     // part 2
     let mut total = 0;
     for (&number, &count) in &counts_1 {
         total += count * number * *counts_2.entry(number).or_default()
     }
-    println!("similarity is {}", total);
     let duration = start.elapsed().as_millis();
-    println!("Done in {} ms", duration);
+    println!(
+        "distance is {}, similarity is {}, done in {} ms",
+        total_distance, total, duration
+    );
     Ok(())
 }
 
