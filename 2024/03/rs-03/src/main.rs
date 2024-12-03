@@ -11,6 +11,8 @@ fn main() {
     let mut valid_alt = 0;
     let mut do_active = true;
     // (?s) at the beginning makes this work over multiple lines
+    // extra () capture group in the do/don't case ensures that captures always have two groups,
+    // which is necessary in order for extract() to not panic
     let pattern = Regex::new(r"(?s)mul\((\d+),(\d+)\)|(do(?:n't)?\(\))()").unwrap();
     for (_, [first, second]) in pattern.captures_iter(&contents).map(|c| c.extract()) {
         match (first, second) {
