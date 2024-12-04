@@ -22,10 +22,6 @@ fn search_xmas(puzzle: &[&str], x0: isize, y0: isize, xmax: isize, ymax: isize) 
         let mut y = y0;
         let mut valid = true;
         while let Some(next_char) = remaining.pop() {
-            if (x == 0) & (dx < 0) || (y == 0) & (dy < 0) {
-                valid = false;
-                break;
-            }
             x += dx;
             y += dy;
             if !(0..=xmax).contains(&x)
