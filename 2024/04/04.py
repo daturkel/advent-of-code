@@ -14,10 +14,11 @@ def search_xmas(puzzle: list[str], x0: int, y0: int, xmax: int, ymax: int) -> in
             next_char = remaining.pop()
             x += dx
             y += dy
-            if not (0 <= x <= xmax) or not (0 <= y <= ymax):
-                valid = False
-                break
-            elif puzzle[y][x] != next_char:
+            if (
+                not (0 <= x <= xmax)
+                or not (0 <= y <= ymax)
+                or puzzle[y][x] != next_char
+            ):
                 valid = False
                 break
         if valid:
@@ -26,11 +27,13 @@ def search_xmas(puzzle: list[str], x0: int, y0: int, xmax: int, ymax: int) -> in
     return count
 
 
-def search_x_mas(puzzle: list[str], x0: int, y0: int) -> int:
+def search_x_mas(puzzle: list[str], x: int, y: int) -> int:
     valid_mas = {("M", "A", "S"), ("S", "A", "M")}
-    if (
-        (puzzle[y0][x0], puzzle[y0 + 1][x0 + 1], puzzle[y0 + 2][x0 + 2]) in valid_mas
-    ) and (puzzle[y0 + 2][x0], puzzle[y0 + 1][x0 + 1], puzzle[y0][x0 + 2]) in valid_mas:
+    if ((puzzle[y][x], puzzle[y + 1][x + 1], puzzle[y + 2][x + 2]) in valid_mas) and (
+        puzzle[y + 2][x],
+        puzzle[y + 1][x + 1],
+        puzzle[y][x + 2],
+    ) in valid_mas:
         return 1
     return 0
 
@@ -44,7 +47,7 @@ def solve(puzzle: list[str]) -> tuple[int, int]:
         for x, char in enumerate(line):
             if char == "X":
                 xmas_count += search_xmas(puzzle, x, y, xmax, ymax)
-            elif char in {"M", "S"} and (x <= xmax - 2) and (y <= ymax - 2):
+            elif (x <= xmax - 2) and (y <= ymax - 2) and char in {"M", "S"}:
                 x_mas_count += search_x_mas(puzzle, x, y)
 
     return xmas_count, x_mas_count
