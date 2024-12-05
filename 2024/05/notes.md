@@ -1,3 +1,3 @@
 Part 1 is straightforwrd: build up a list of "followers", i.e. {"a": ["b","c"]} means b and c must follow a. Then iterate through every page list backwards, making sure the pages added to the end are followers of the next page to insert at the beginning.
 
-For part two, we need to re-sort the incorrectly sorted ones. I implemented insertion sort.
+For part two, we need to re-sort the incorrectly sorted ones. I implemented insertion sort first, but then swapped it out for sorted(pages, key=cmp_to_key(lambda x, y: 1 if x in followers[y] else -1).
