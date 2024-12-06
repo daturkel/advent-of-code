@@ -1,7 +1,35 @@
 import sys
+from collections import defaultdict
 from time import perf_counter
 
 DIRS = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+
+
+def get_journey_length(
+    lines: list[str],
+    x: int,
+    y: int,
+    xmax: int,
+    ymax: int,
+    obs_x: int | None = None,
+    obs_y: int | None = None,
+) -> int:
+    visited = defaultdict(set)
+    dir_index = 0
+    dx, dy = DIRS[dir_index]
+    while True:
+        if (dx, dy) in visited[(x, y)]:
+            return -1
+        visited[(x, y)].add((dx, dy))
+        next_x, next_y = x + dx, y + dy
+        if not (0 <= next_x < xmax and 0 <= next_y < ymax):
+            break
+        elif (lines[next_y][next_x] == "#") or (next_x, next_y) == (obs_x, obs_y):
+            dir_index = (dir_index + 1) % 4
+            dx, dy = DIRS[dir_index]
+        else:
+            x, y = next_x, next_y
+    return len(visited)
 
 
 def solve(lines: list[str]) -> tuple[int, int]:
@@ -14,22 +42,16 @@ def solve(lines: list[str]) -> tuple[int, int]:
             break
         except ValueError:
             pass
-    visited = set()
-    # guard starts facing up
-    dir_index = 0
-    dx, dy = DIRS[dir_index]
-    while True:
-        visited.add((x, y))
-        next_x, next_y = x + dx, y + dy
-        if not (0 <= next_x < xmax and 0 <= next_y < ymax):
-            break
-        elif lines[next_y][next_x] == "#":
-            dir_index = (dir_index + 1) % 4
-            dx, dy = DIRS[dir_index]
-        else:
-            x, y = next_x, next_y
+    part_one = get_journey_length(lines, x, y, xmax, ymax)
+    loop_creators = 0
+    for obs_y, line in enumerate(lines):
+        for obs_x, char in enumerate(line):
+            if char not in {"^", "#"}:
+                journey = get_journey_length(lines, x, y, xmax, ymax, obs_x, obs_y)
+                if journey == -1:
+                    loop_creators += 1
 
-    return len(visited), 0
+    return part_one, loop_creators
 
 
 if __name__ == "__main__":
