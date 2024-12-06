@@ -1,35 +1,7 @@
 import sys
-from collections import defaultdict
 from time import perf_counter
 
 DIRS = [(0, -1), (1, 0), (0, 1), (-1, 0)]
-
-
-def get_journey_length(
-    lines: list[str],
-    x: int,
-    y: int,
-    xmax: int,
-    ymax: int,
-    obs_x: int | None = None,
-    obs_y: int | None = None,
-) -> dict[tuple[int, int], set[tuple[int, int]]]:
-    visited = defaultdict(set)
-    dir_index = 0
-    dx, dy = DIRS[dir_index]
-    while True:
-        if (dx, dy) in visited[(x, y)]:
-            raise RuntimeError("loop!")
-        visited[(x, y)].add((dx, dy))
-        next_x, next_y = x + dx, y + dy
-        if not (0 <= next_x < xmax and 0 <= next_y < ymax):
-            break
-        elif (lines[next_y][next_x] == "#") or (next_x, next_y) == (obs_x, obs_y):
-            dir_index = (dir_index + 1) % 4
-            dx, dy = DIRS[dir_index]
-        else:
-            x, y = next_x, next_y
-    return visited
 
 
 def solve(lines: list[str]) -> tuple[int, int]:
@@ -42,17 +14,59 @@ def solve(lines: list[str]) -> tuple[int, int]:
             break
         except ValueError:
             pass
-    part_one_dict = get_journey_length(lines, x, y, xmax, ymax)
-    part_one = len(part_one_dict)
-    del part_one_dict[(x, y)]  # don't put obstacle at starting position
-    loop_creators = 0
-    for obs_x, obs_y in part_one_dict:
-        try:
-            get_journey_length(lines, x, y, xmax, ymax, obs_x, obs_y)
-        except RuntimeError:
-            loop_creators += 1
 
-    return part_one, loop_creators
+    def get_journey_length(
+        x: int,
+        y: int,
+        dir_index: int,
+        obs_x: int | None = None,
+        obs_y: int | None = None,
+    ) -> dict[tuple[int, int, int, int], tuple[int, int]]:
+        visited = {}
+        dx, dy = DIRS[dir_index]
+        while True:
+            if (x, y, dx, dy) in visited:
+                raise RuntimeError("loop!")
+            visited[(x, y, dx, dy)] = (x, y)
+            next_x, next_y = x + dx, y + dy
+            if not (0 <= next_x < xmax and 0 <= next_y < ymax):
+                break
+            elif (lines[next_y][next_x] == "#") or (next_x, next_y) == (obs_x, obs_y):
+                dir_index = (dir_index + 1) % 4
+                dx, dy = DIRS[dir_index]
+            else:
+                x, y = next_x, next_y
+        return visited
+
+    # dir_index is 0 because we're facing up
+    part_one_dict = get_journey_length(x, y, 0)
+    part_one = len(set(part_one_dict.values()))
+    del part_one_dict[(x, y, 0, -1)]  # don't put obstacle at starting position
+    solutions_a = set()
+    solutions_b = set()
+    for obs_x, obs_y, _, _ in part_one_dict:
+        try:
+            get_journey_length(x, y, 0, obs_x, obs_y)
+        except RuntimeError:
+            solutions_a.add((obs_x, obs_y))
+    # last_dir = (0, -1)
+    # last_x, last_y = (x, y)
+    # for obs_x, obs_y, dx, dy in part_one_dict:
+    #     if ((obs_x, obs_y) not in solutions_b) and ((obs_x, obs_y) != (last_x, last_y)):
+    #         try:
+    #             get_journey_length(
+    #                 x=last_x,
+    #                 y=last_y,
+    #                 dir_index=DIRS.index(last_dir),
+    #                 obs_x=obs_x,
+    #                 obs_y=obs_y,
+    #             )
+    #         except RuntimeError:
+    #             solutions_b.add((obs_x, obs_y))
+    #     last_dir = (dx, dy)
+    #     last_x, last_y = obs_x, obs_y
+
+    return part_one, len(solutions_a)
 
 
 if __name__ == "__main__":
