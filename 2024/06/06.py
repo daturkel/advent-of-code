@@ -42,31 +42,27 @@ def solve(lines: list[str]) -> tuple[int, int]:
     part_one_dict = get_journey_length(x, y, 0)
     part_one = len(set(part_one_dict.values()))
     del part_one_dict[(x, y, 0, -1)]  # don't put obstacle at starting position
-    solutions_a = set()
-    for obs_x, obs_y, _, _ in part_one_dict:
-        try:
-            get_journey_length(x, y, 0, obs_x, obs_y)
-        except RuntimeError:
-            solutions_a.add((obs_x, obs_y))
-    # solutions_b = set()
-    # last_dir = (0, -1)
-    # last_x, last_y = (x, y)
-    # for obs_x, obs_y, dx, dy in part_one_dict:
-    #     if ((obs_x, obs_y) not in solutions_b) and ((obs_x, obs_y) != (last_x, last_y)):
-    #         try:
-    #             get_journey_length(
-    #                 x=last_x,
-    #                 y=last_y,
-    #                 dir_index=DIRS.index(last_dir),
-    #                 obs_x=obs_x,
-    #                 obs_y=obs_y,
-    #             )
-    #         except RuntimeError:
-    #             solutions_b.add((obs_x, obs_y))
-    #     last_dir = (dx, dy)
-    #     last_x, last_y = obs_x, obs_y
+    solutions = set()
+    checked = set()
+    last_dir = (0, -1)
+    last_x, last_y = (x, y)
+    for obs_x, obs_y, dx, dy in part_one_dict:
+        if ((obs_x, obs_y) not in checked) and ((obs_x, obs_y) != (last_x, last_y)):
+            try:
+                get_journey_length(
+                    x=last_x,
+                    y=last_y,
+                    dir_index=DIRS.index(last_dir),
+                    obs_x=obs_x,
+                    obs_y=obs_y,
+                )
+            except RuntimeError:
+                solutions.add((obs_x, obs_y))
+        checked.add((obs_x, obs_y))
+        last_dir = (dx, dy)
+        last_x, last_y = obs_x, obs_y
 
-    return part_one, len(solutions_a)
+    return part_one, len(solutions)
 
 
 if __name__ == "__main__":
