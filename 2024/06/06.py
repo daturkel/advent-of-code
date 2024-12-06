@@ -43,12 +43,12 @@ def solve(lines: list[str]) -> tuple[int, int]:
     part_one = len(set(part_one_dict.values()))
     del part_one_dict[(x, y, 0, -1)]  # don't put obstacle at starting position
     solutions_a = set()
-    solutions_b = set()
     for obs_x, obs_y, _, _ in part_one_dict:
         try:
             get_journey_length(x, y, 0, obs_x, obs_y)
         except RuntimeError:
             solutions_a.add((obs_x, obs_y))
+    # solutions_b = set()
     # last_dir = (0, -1)
     # last_x, last_y = (x, y)
     # for obs_x, obs_y, dx, dy in part_one_dict:
