@@ -13,13 +13,13 @@ def get_journey_length(
     ymax: int,
     obs_x: int | None = None,
     obs_y: int | None = None,
-) -> int:
+) -> dict[tuple[int, int], set[tuple[int, int]]]:
     visited = defaultdict(set)
     dir_index = 0
     dx, dy = DIRS[dir_index]
     while True:
         if (dx, dy) in visited[(x, y)]:
-            return -1
+            raise RuntimeError("loop!")
         visited[(x, y)].add((dx, dy))
         next_x, next_y = x + dx, y + dy
         if not (0 <= next_x < xmax and 0 <= next_y < ymax):
@@ -29,7 +29,7 @@ def get_journey_length(
             dx, dy = DIRS[dir_index]
         else:
             x, y = next_x, next_y
-    return len(visited)
+    return visited
 
 
 def solve(lines: list[str]) -> tuple[int, int]:
@@ -42,14 +42,15 @@ def solve(lines: list[str]) -> tuple[int, int]:
             break
         except ValueError:
             pass
-    part_one = get_journey_length(lines, x, y, xmax, ymax)
+    part_one_dict = get_journey_length(lines, x, y, xmax, ymax)
+    part_one = len(part_one_dict)
+    del part_one_dict[(x, y)]  # don't put obstacle at starting position
     loop_creators = 0
-    for obs_y, line in enumerate(lines):
-        for obs_x, char in enumerate(line):
-            if char not in {"^", "#"}:
-                journey = get_journey_length(lines, x, y, xmax, ymax, obs_x, obs_y)
-                if journey == -1:
-                    loop_creators += 1
+    for obs_x, obs_y in part_one_dict:
+        try:
+            get_journey_length(lines, x, y, xmax, ymax, obs_x, obs_y)
+        except RuntimeError:
+            loop_creators += 1
 
     return part_one, loop_creators
 
