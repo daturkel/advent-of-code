@@ -11,56 +11,54 @@ struct Point {
 }
 
 impl Point {
-    fn rotate(&self) -> Point {
+    fn rotate(self) -> Point {
         match self {
             Point { x: 0, y: 1 } => Point { x: -1, y: 0 },
             Point { x: -1, y: 0 } => Point { x: 0, y: -1 },
             Point { x: 0, y: -1 } => Point { x: 1, y: 0 },
             Point { x: 1, y: 0 } => Point { x: 0, y: 1 },
-            Point { x: _, y: _ } => Point { x: 0, y: 0 },
+            _ => Point { x: 0, y: 0 },
         }
     }
 
-    fn move_dir(&self, dir: &Point) -> Point {
+    fn move_dir(self, dir: &Point) -> Point {
         Point {
             x: self.x + dir.x,
             y: self.y + dir.y,
         }
     }
 
-    fn in_bounds(&self, bounds: &Point) -> bool {
+    fn in_bounds(self, bounds: Point) -> bool {
         (0..=bounds.x).contains(&self.x) && (0..=bounds.y).contains(&self.y)
     }
 }
 
 fn get_journey_length(
     lines: &[&str],
-    pos: &mut Point,
-    dir: &mut Point,
+    mut pos: Point,
+    mut dir: Point,
     obs_pos: Option<Point>,
     bounds: Point,
 ) -> Option<IndexMap<(Point, Point), Point>> {
     let mut visited: IndexMap<(Point, Point), Point> = IndexMap::new();
-    let mut next_pos: Point;
     loop {
-        if visited.contains_key(&(*pos, *dir)) {
+        if visited.contains_key(&(pos, dir)) {
             return None;
         }
-        visited.insert((*pos, *dir), *pos);
-        next_pos = pos.move_dir(dir);
-        let next_pos_option = Some(next_pos);
-        if !next_pos.in_bounds(&bounds) {
+        visited.insert((pos, dir), pos);
+        let next_pos = pos.move_dir(&dir);
+        if !next_pos.in_bounds(bounds) {
             break;
         } else if (lines[next_pos.y as usize]
             .chars()
             .nth(next_pos.x as usize)
             .unwrap()
             == '#')
-            || (next_pos_option == obs_pos)
+            || (Some(next_pos) == obs_pos)
         {
-            *dir = dir.rotate();
+            dir = dir.rotate();
         } else {
-            *pos = next_pos;
+            pos = next_pos;
         }
     }
     Some(visited)
@@ -80,12 +78,12 @@ fn solve(lines: &[&str]) -> (usize, usize) {
             break;
         }
     }
-    let mut pos = Point {
+    let pos = Point {
         x: x as isize,
         y: y as isize,
     };
-    let mut dir = Point { x: 0, y: -1 };
-    let mut part_one_dict = get_journey_length(lines, &mut pos, &mut dir, None, bounds).unwrap();
+    let dir = Point { x: 0, y: -1 };
+    let mut part_one_dict = get_journey_length(lines, pos, dir, None, bounds).unwrap();
     let part_one_set: HashSet<Point> = part_one_dict.values().cloned().collect();
     let part_one = part_one_set.len();
 
@@ -97,16 +95,16 @@ fn solve(lines: &[&str]) -> (usize, usize) {
         y: y as isize,
     };
     part_one_dict.shift_remove(&(last_pos, last_dir));
-    for (obs, obs_dir) in part_one_dict.keys() {
-        if !checked.contains(obs) && (last_pos != *obs) {
-            let check = get_journey_length(lines, &mut last_pos, &mut last_dir, Some(*obs), bounds);
+    for &(obs, obs_dir) in part_one_dict.keys() {
+        if !checked.contains(&obs) && (last_pos != obs) {
+            let check = get_journey_length(lines, last_pos, last_dir, Some(obs), bounds);
             if check.is_none() {
-                solutions.insert(*obs);
+                solutions.insert(obs);
             }
         }
-        checked.insert(*obs);
-        last_dir = *obs_dir;
-        last_pos = *obs;
+        checked.insert(obs);
+        last_dir = obs_dir;
+        last_pos = obs;
     }
     (part_one, solutions.len())
 }
