@@ -5,3 +5,5 @@ I iterate through all ordered combinations of the operators and stop if I reach 
 In part two, we add a concatenation operator.
 
 A smarter way to do this would be to do DFS to build up the list of operators where we prefer times and plus over cat, since using product to generate the list of operations comes up with a less than ideal ordering.
+
+I got a very minor speed boost by replacing lambdas with operator.add, operator.mul for those two operations.

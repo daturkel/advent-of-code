@@ -1,10 +1,11 @@
 import sys
 from itertools import product
+from operator import add, mul
 from time import perf_counter
 from typing import Callable
 
-PLUS = lambda x, y: x + y  # noqa: E731
-TIMES = lambda x, y: x * y  # noqa: E731
+PLUS = add
+TIMES = mul
 CAT = lambda x, y: x * 10 ** len(str(y)) + y  # noqa: E731
 
 
