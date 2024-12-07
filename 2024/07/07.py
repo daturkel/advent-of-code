@@ -5,20 +5,7 @@ from typing import Callable
 
 PLUS = lambda x, y: x + y  # noqa: E731
 TIMES = lambda x, y: x * y  # noqa: E731
-
-
-class Op:
-    def __init__(self, fn: Callable[[int, int], int], name: str):
-        self.fn = fn
-        self.name = name
-
-    def __call__(self, x: int, y: int) -> int:
-        return self.fn(x, y)
-
-
-PLUS = Op(lambda x, y: x + y, "plus")
-TIMES = Op(lambda x, y: x * y, "times")
-CAT = Op(lambda x, y: int(str(x) + str(y)), "cat")
+CAT = lambda x, y: x * 10 ** len(str(y)) + y  # noqa: E731
 
 
 def get_operation_combinations(
@@ -27,6 +14,7 @@ def get_operation_combinations(
     try:
         return cache[num_ops]
     except KeyError:
+        # must be a list so that it doesn't get exhausted after one use like an iterable
         result = list(product([PLUS, TIMES, CAT], repeat=num_ops))
         cache[num_ops] = result
         return result
