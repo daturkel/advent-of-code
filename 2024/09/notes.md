@@ -1,0 +1,3 @@
+In part one, we have to defragment a disk by moving blocks of data to the left. We keep track of all the empty spots and progressively move the rightmost block into it.
+
+In part two, we can only move full contiguous chunks of data leftward, so we need to do more careful bookkeeping of contiguous blocks of occupied and empty space. Importantly, we also must double check that we never move data to the *right*.
