@@ -4,23 +4,25 @@ from time import perf_counter
 Point = tuple[int, int]
 
 
-def solve(lines: list[str]) -> tuple[int, int]:
+def solve(lines: list[str]) -> Point:
     zeros = set()
     xmax = len(lines[0])
     ymax = len(lines)
     grid: list[list[int]] = [[int(n) for n in line] for line in lines]
+    # find the zeros
     for y, line in enumerate(grid):
         for x, num in enumerate(line):
             if num == 0:
                 zeros.add((x, y))
 
+    # DFS with cache
     def paths_to_end(
         x: int, y: int, cache: dict[Point, tuple[set[Point], int]] = {}
     ) -> tuple[set[Point], int]:
         if (x, y) in cache:
             return cache[(x, y)]
-        rating = 0
-        ends = set()
+        rating = 0  # ways to reach any 9
+        ends = set()  # unique 9s visited
         value = grid[y][x]
         for xx, yy in [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]:
             if 0 <= xx < xmax and 0 <= yy < ymax:
