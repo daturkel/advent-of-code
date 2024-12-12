@@ -65,7 +65,7 @@ def solve(lines: list[str]) -> tuple[int, int]:
             else:
                 dx, dy = 0, 1
 
-            # travel west or north, checking for next piece of this side
+            # travel west or north, checking for next piece of this side and removing it
             xx = edge.x - dx
             yy = edge.y - dy
             while xx >= 0 and yy >= 0:
@@ -76,7 +76,7 @@ def solve(lines: list[str]) -> tuple[int, int]:
                     yy -= dy
                 else:
                     break
-            # travel east or south, checking for next piece of this side
+            # travel east or south, checking for next piece of this side and removing it
             xx = edge.x + dx
             yy = edge.y + dy
             while xx < xmax and yy < ymax:
