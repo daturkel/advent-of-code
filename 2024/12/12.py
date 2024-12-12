@@ -4,7 +4,6 @@ from time import perf_counter
 from typing import Literal
 
 
-# we only mutate during post_init so unsafe_hash is ok
 @dataclass(frozen=True)
 class Edge:
     x: int
@@ -18,13 +17,14 @@ def solve(lines: list[str]) -> tuple[int, int]:
     visited: set[tuple[int, int]] = set()
 
     def get_area_and_perimiter(
-        x0: int, y0: int, visited: set[tuple[int, int]], lines: list[str]
-    ) -> tuple[int, int, int, set[tuple[int, int]]]:
+        x0: int,
+        y0: int,
+    ) -> tuple[int, int, int]:
         char = lines[y0][x0]
         to_visit = [(x0, y0)]
         region = set([(x0, y0)])
         perimeter: set[Edge] = set()
-        # perimeter = 0
+        # collect area and edges
         while to_visit:
             x, y = to_visit.pop()
             visited.add((x, y))
@@ -36,19 +36,26 @@ def solve(lines: list[str]) -> tuple[int, int]:
             ]:
                 if 0 <= xx < xmax and 0 <= yy < ymax:
                     if (xx, yy) in region:
+                        # already counted for area
+                        # doesn't contribute a new edge
                         pass
-                    elif (xx, yy) in visited:
+                    elif lines[yy][xx] != char:
+                        # not part of area (wrong character)
+                        # does contribute an edge
                         perimeter.add(Edge(x, y, dir_))  # type: ignore
                     elif lines[yy][xx] == char:
+                        # part of area
+                        # does not contribute an edge
                         to_visit.append((xx, yy))
                         region.add((xx, yy))
-                    else:
-                        perimeter.add(Edge(x, y, dir_))  # type: ignore
                 else:
+                    # not part of area (off the grid)
+                    # does contribute an edge
                     perimeter.add(Edge(x, y, dir_))  # type: ignore
 
         len_perimeter = len(perimeter)
 
+        # collect num sides
         num_sides = 0
         while perimeter:
             edge = perimeter.pop()
@@ -58,6 +65,7 @@ def solve(lines: list[str]) -> tuple[int, int]:
             else:
                 dx, dy = 0, 1
 
+            # travel west or north, checking for next piece of this side
             xx = edge.x - dx
             yy = edge.y - dy
             while xx >= 0 and yy >= 0:
@@ -68,6 +76,7 @@ def solve(lines: list[str]) -> tuple[int, int]:
                     yy -= dy
                 else:
                     break
+            # travel east or south, checking for next piece of this side
             xx = edge.x + dx
             yy = edge.y + dy
             while xx < xmax and yy < ymax:
@@ -79,17 +88,14 @@ def solve(lines: list[str]) -> tuple[int, int]:
                 else:
                     break
 
-        return len(region), len_perimeter, num_sides, visited
+        return len(region), len_perimeter, num_sides
 
     cost_one = 0
     cost_two = 0
-
     for y, line in enumerate(lines):
-        for x, char in enumerate(line):
+        for x, _ in enumerate(line):
             if (x, y) not in visited:
-                area, perimeter, num_sides, visited = get_area_and_perimiter(
-                    x, y, visited, lines
-                )
+                area, perimeter, num_sides = get_area_and_perimiter(x, y)
                 cost_one += area * perimeter
                 cost_two += area * num_sides
 
