@@ -6,9 +6,11 @@ For part 2, we consider all the edges we selected. For a given edge, we check to
 
 Originally I had canonicalized edge representations so that there was never two ways of representing the same edge (i.e. 0,0,"E" and 1,0,"W"). This turned out to be a bad idea, because it means you can't distinguish that a side south of Y actually does not count as the same side north of Y+1. Removing the canonicalization code fixed this.
 
+```
 AAAAAA
 AAABBA
 AAABBA < see the problem here?
 ABBAAA
 ABBAAA
 AAAAAA
+```
