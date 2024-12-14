@@ -1,5 +1,6 @@
 import re
 import sys
+from collections import defaultdict
 from dataclasses import dataclass
 from time import perf_counter
 
@@ -17,17 +18,19 @@ class Robot:
         self.x = (self.x + times * self.dx) % xmax
         self.y = (self.y + times * self.dy) % ymax
 
-    def get_quadrant(self, xmax: int, ymax: int) -> int | None:
-        if self.x < xmax // 2:
-            if self.y < ymax // 2:
-                return 0
-            elif self.y > ymax // 2:
-                return 1
-        elif self.x > xmax // 2:
-            if self.y < ymax // 2:
-                return 2
-            elif self.y > ymax // 2:
-                return 3
+
+def point_to_quadrant(x: int, y: int, xmax: int, ymax: int) -> int:
+    if x < xmax // 2:
+        if y < ymax // 2:
+            return 0
+        elif y > ymax // 2:
+            return 2
+    elif x > xmax // 2:
+        if y < ymax // 2:
+            return 1
+        elif y > ymax // 2:
+            return 3
+    return 4
 
 
 def show(robots: list[Robot], xmax: int, ymax: int):
@@ -49,19 +52,33 @@ def solve(lines: list[str], xmax: int, ymax: int) -> tuple[int, int]:
         x, y, dx, dy = PATTERN.findall(line)
         robots.append(Robot(int(x), int(y), int(dx), int(dy)))
 
-    quadrants = [0, 0, 0, 0]
-    for robot in robots:
-        robot.move(100, xmax, ymax)
-        quadrant = robot.get_quadrant(xmax, ymax)
-        if quadrant is not None:
+    part_one = 0
+    min_danger = (101 * 103) ** 4
+    min_danger_idx = 0
+    for i in range(xmax * ymax + 1):
+        grid = [[" " for _ in range(xmax)] for _ in range(ymax)]
+        quadrants = [0, 0, 0, 0, 0]
+        for robot in robots:
+            robot.move(1, xmax, ymax)
+            grid[robot.y][robot.x] = "X"
+            quadrant = point_to_quadrant(robot.x, robot.y, xmax, ymax)
             quadrants[quadrant] += 1
+        # part one
+        danger = quadrants[0] * quadrants[1] * quadrants[2] * quadrants[3]
+        if i == 99:
+            part_one = danger
+        # part two, silly version
+        for row in grid:
+            if "XXXXXXXXXXXXXXX" in "".join(row):
+                return part_one, i + 1
+        # part two, danger minimizing version
+        # if danger < min_danger:
+        #     min_danger = danger
+        #     min_danger_idx = i + 1
+        #     # print("-" * xmax)
+        #     # show(robots, xmax, ymax)
 
-    part_one = 1
-    for quadrant in quadrants:
-        part_one *= quadrant
-    print("-" * xmax)
-
-    return part_one, 0
+    return part_one, min_danger_idx
 
 
 if __name__ == "__main__":
