@@ -1,6 +1,5 @@
 import re
 import sys
-from collections import defaultdict
 from dataclasses import dataclass
 from time import perf_counter
 
@@ -53,7 +52,7 @@ def solve(lines: list[str], xmax: int, ymax: int) -> tuple[int, int]:
         robots.append(Robot(int(x), int(y), int(dx), int(dy)))
 
     part_one = 0
-    min_danger = (101 * 103) ** 4
+    min_danger = (101 * 103) ** 4  # noqa: F841
     min_danger_idx = 0
     for i in range(xmax * ymax + 1):
         grid = [[" " for _ in range(xmax)] for _ in range(ymax)]
