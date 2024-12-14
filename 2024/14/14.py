@@ -69,6 +69,7 @@ def solve(lines: list[str], xmax: int, ymax: int) -> tuple[int, int]:
         # part two, silly version
         for row in grid:
             if "XXXXXXXXXXXXXXX" in "".join(row):
+                # show(robots, xmax, ymax)
                 return part_one, i + 1
         # part two, danger minimizing version
         # if danger < min_danger:
