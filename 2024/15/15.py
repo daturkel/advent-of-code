@@ -22,35 +22,22 @@ def can_shift(grid: list[list[str]], x: int, y: int, dx: int, dy: int) -> bool:
         return False
 
 
-def try_shift(grid: list[list[str]], x: int, y: int, dx: int, dy: int) -> bool:
+def shift(grid: list[list[str]], x: int, y: int, dx: int, dy: int):
     next_char = grid[y + dy][x + dx]
     if next_char == ".":
         grid[y + dy][x + dx] = grid[y][x]
         grid[y][x] = "."
-        return True
     elif next_char == "O":
-        if try_shift(grid, x + dx, y + dy, dx, dy):
-            grid[y + dy][x + dx] = grid[y][x]
-            grid[y][x] = "."
-            return True
-        else:
-            return False
+        shift(grid, x + dx, y + dy, dx, dy)
+        grid[y + dy][x + dx] = grid[y][x]
+        grid[y][x] = "."
     elif next_char == "[":
-        if can_shift(grid, x + dx, y + dy, dx, dy):
-            try_shift(grid, x + dx, y + dy, dx, dy)
-            try_shift(grid, x + 1 + dx, y + dy, dx, dy)
-            return True
-        else:
-            return False
+        shift(grid, x + dx, y + dy, dx, dy)
+        shift(grid, x + 1 + dx, y + dy, dx, dy)
     elif next_char == "]":
         if can_shift(grid, x + dx, y + dy, dx, dy):
-            try_shift(grid, x + dx, y + dy, dx, dy)
-            try_shift(grid, x - 1 + dx, y + dy, dx, dy)
-            return True
-        else:
-            return False
-    else:
-        return False
+            shift(grid, x + dx, y + dy, dx, dy)
+            shift(grid, x - 1 + dx, y + dy, dx, dy)
 
 
 def simulate(
@@ -62,7 +49,8 @@ def simulate(
 ):
     x, y = x0, y0
     for dx, dy in directions:
-        if try_shift(grid, x, y, dx, dy):
+        if can_shift(grid, x, y, dx, dy):
+            shift(grid, x, y, dx, dy)
             x += dx
             y += dy
         if debug:
@@ -76,7 +64,7 @@ def get_gps(grid: list[list["str"]]) -> int:
     gps = 0
     for y, line in enumerate(grid):
         for x, char in enumerate(line):
-            if char == "O":
+            if char in ("O", "["):
                 gps += x + 100 * y
     return gps
 
@@ -127,11 +115,14 @@ def solve(lines: list[str]) -> tuple[int, int]:
     gps_one = get_gps(grid)
 
     # part two
-    show(new_grid)
+    # show(new_grid)
 
-    new_grid = simulate(x0 * 2, y0, new_grid, directions, debug=True)
+    gps_two = 0
+    # new_grid = simulate(x0 * 2, y0, new_grid, directions)
+    # show(new_grid)
+    # gps_two = get_gps(new_grid)
 
-    return gps_one, 0
+    return gps_one, gps_two
 
 
 if __name__ == "__main__":
