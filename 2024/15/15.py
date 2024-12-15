@@ -1,43 +1,59 @@
 import sys
+from collections import deque
 from time import perf_counter
 
 DIR_TO_DELTA = {">": (1, 0), "<": (-1, 0), "^": (0, -1), "v": (0, 1)}
 
 
 def can_shift(grid: list[list[str]], x: int, y: int, dx: int, dy: int) -> bool:
-    next_char = grid[y + dy][x + dx]
-    if next_char == ".":
-        return True
-    elif next_char == "O":
-        return can_shift(grid, x + dx, y + dy, dx, dy)
-    elif next_char == "[":
-        return can_shift(grid, x + dx, y + dy, dx, dy) and can_shift(
-            grid, x + dx + 1, y + dy, dx, dy
-        )
-    elif next_char == "]":
-        return can_shift(grid, x + dx, y + dy, dx, dy) and can_shift(
-            grid, x + dx + 1, y + dy, dx, dy
-        )
-    else:
-        return False
+    to_check = deque()
+    to_check.append((x, y))
+    checked = set()
+    while to_check:
+        x, y = to_check.popleft()
+        checked.add((x, y))
+        next_char = grid[y + dy][x + dx]
+        if next_char == ".":
+            continue
+        elif next_char == "O":
+            to_check.append((x + dx, y + dy))
+        elif next_char == "[":
+            if (x + dx, y + dy) not in checked:
+                to_check.append((x + dx, y + dy))
+            if (x + 1 + dx, y + dy) not in checked:
+                to_check.append((x + 1 + dx, y + dy))
+        elif next_char == "]":
+            if (x + dx, y + dy) not in checked:
+                to_check.append((x + dx, y + dy))
+            if (x - 1 + dx, y + dy) not in checked:
+                to_check.append((x - 1 + dx, y + dy))
+        elif next_char == "#":
+            return False
+    return True
 
 
 def shift(grid: list[list[str]], x: int, y: int, dx: int, dy: int):
+    char = grid[y][x]
     next_char = grid[y + dy][x + dx]
     if next_char == ".":
-        grid[y + dy][x + dx] = grid[y][x]
+        grid[y + dy][x + dx] = char
         grid[y][x] = "."
     elif next_char == "O":
         shift(grid, x + dx, y + dy, dx, dy)
-        grid[y + dy][x + dx] = grid[y][x]
+        grid[y + dy][x + dx] = char
         grid[y][x] = "."
     elif next_char == "[":
+        if dx != -1:  # if we're not moving left, also move the right side
+            shift(grid, x + 1 + dx, y + dy, dx, dy)
         shift(grid, x + dx, y + dy, dx, dy)
-        shift(grid, x + 1 + dx, y + dy, dx, dy)
+        grid[y + dy][x + dx] = char
+        grid[y][x] = "."
     elif next_char == "]":
-        if can_shift(grid, x + dx, y + dy, dx, dy):
-            shift(grid, x + dx, y + dy, dx, dy)
+        if dx != 1:  # if we're not moving right, also move the left side
             shift(grid, x - 1 + dx, y + dy, dx, dy)
+        shift(grid, x + dx, y + dy, dx, dy)
+        grid[y + dy][x + dx] = char
+        grid[y][x] = "."
 
 
 def simulate(
@@ -54,7 +70,6 @@ def simulate(
             x += dx
             y += dy
         if debug:
-            print(dx, dy)
             show(grid)
             input()
     return grid
@@ -94,12 +109,10 @@ def solve(lines: list[str]) -> tuple[int, int]:
     for line in grid:
         row = []
         for char in line:
-            if char == "#":
-                row += ["#", "#"]
+            if char in ("#", "."):
+                row += [char, char]
             elif char == "O":
                 row += ["[", "]"]
-            elif char == ".":
-                row += [".", "."]
             else:
                 row += ["@", "."]
         new_grid.append(row)
@@ -109,18 +122,15 @@ def solve(lines: list[str]) -> tuple[int, int]:
         directions += [DIR_TO_DELTA[d] for d in line]
 
     # simulate robot
-    grid = simulate(x0, y0, grid, directions)
+    grid = simulate(x0, y0, grid, directions, False)
 
     # calculate score
     gps_one = get_gps(grid)
 
     # part two
-    # show(new_grid)
-
     gps_two = 0
-    # new_grid = simulate(x0 * 2, y0, new_grid, directions)
-    # show(new_grid)
-    # gps_two = get_gps(new_grid)
+    new_grid = simulate(x0 * 2, y0, new_grid, directions, False)
+    gps_two = get_gps(new_grid)
 
     return gps_one, gps_two
 
