@@ -1,34 +1,27 @@
 import sys
-from collections import deque
 from time import perf_counter
 
 DIR_TO_DELTA = {">": (1, 0), "<": (-1, 0), "^": (0, -1), "v": (0, 1)}
 
 
 def can_shift(grid: list[list[str]], x: int, y: int, dx: int, dy: int) -> bool:
-    to_check = deque()
-    to_check.append((x, y))
-    checked = set()
-    while to_check:
-        x, y = to_check.popleft()
-        checked.add((x, y))
-        next_char = grid[y + dy][x + dx]
-        if next_char == ".":
-            continue
-        elif next_char == "O":
-            to_check.append((x + dx, y + dy))
-        elif next_char == "[":
-            if (x + dx, y + dy) not in checked:
-                to_check.append((x + dx, y + dy))
-            if (x + 1 + dx, y + dy) not in checked:
-                to_check.append((x + 1 + dx, y + dy))
-        elif next_char == "]":
-            if (x + dx, y + dy) not in checked:
-                to_check.append((x + dx, y + dy))
-            if (x - 1 + dx, y + dy) not in checked:
-                to_check.append((x - 1 + dx, y + dy))
-        elif next_char == "#":
-            return False
+    next_char = grid[y + dy][x + dx]
+    if next_char == ".":
+        return True
+    elif next_char == "O":
+        return can_shift(grid, x + dx, y + dy, dx, dy)
+    elif next_char == "[":
+        result = can_shift(grid, x + dx, y + dy, dx, dy)
+        if dx != -1:  # if we're not moving left, check right
+            result &= can_shift(grid, x + 1 + dx, y + dy, dx, dy)
+        return result
+    elif next_char == "]":
+        result = can_shift(grid, x + dx, y + dy, dx, dy)
+        if dx != 1:  # if we're not moving right, check left
+            result &= can_shift(grid, x - 1 + dx, y + dy, dx, dy)
+        return result
+    elif next_char == "#":
+        return False
     return True
 
 
