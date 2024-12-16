@@ -1,0 +1,1 @@
+use djikstra's for part 1. however, it's currently only finding one path, which means it doesn't work for part 2.
