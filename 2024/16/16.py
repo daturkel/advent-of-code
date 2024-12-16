@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import heapq
 import sys
-from collections import deque
+from collections import defaultdict
 from dataclasses import dataclass
 from time import perf_counter
 
@@ -46,32 +47,57 @@ class Node:
 
         return neighbors
 
+    # this class needs to be comparable in order to break ties in the queue
+    def __lt__(self, other):
+        return self.score < other.score
+
+
+def show(lines, x, y, score, visited):
+    print(score)
+    for yy, line in enumerate(lines):
+        row = []
+        for xx, char in enumerate(line):
+            if (xx, yy) == (x, y):
+                row.append("X")
+            elif (xx, yy) in visited:
+                row.append("O")
+            else:
+                row.append(char)
+        print("".join(row))
+
 
 def solve(lines: list[str]) -> tuple[int, int]:
     xmax = len(lines[0]) - 1
     ymax = len(lines) - 1
     x0 = 1
     y0 = len(lines) - 2
-
     end = (xmax - 1, 1)
 
-    queue: deque[Node] = deque()
-    root = Node(x0, y0, 1, 0, xmax, ymax)
-    queue.append(root)
+    distances = defaultdict(lambda: float("inf"))
+    distances[(x0, y0)] = 0
+
+    queue = [Node(x0, y0, 1, 0, xmax, ymax)]
     ends = []
+    visited = set()
     score = float("inf")
     while queue:
-        print(score)
-        node = queue.popleft()
+        node = heapq.heappop(queue)
+        visited.add((node.x, node.y))
+        show(lines, node.x, node.y, node.score, visited)
+        input()
         if (node.x, node.y) == end:
             ends.append(node)
             score = node.score
         for neighbor in node.neighbors():
-            if neighbor.score > score:
-                continue
             if lines[neighbor.y][neighbor.x] != "#":
-                queue.append(neighbor)
+                if (
+                    neighbor.score <= distances[(neighbor.x, neighbor.y)]
+                    and neighbor.score < score
+                ):
+                    heapq.heappush(queue, neighbor)
+                    distances[(neighbor.x, neighbor.y)] = neighbor.score
 
+    print(ends)
     for end in ends:
         score = min(score, end.score)
 
