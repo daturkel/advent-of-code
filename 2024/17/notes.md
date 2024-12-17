@@ -1,0 +1,5 @@
+we have to implement an instruction set.
+
+part 1 is trivial: implement each instruction and run the program.
+
+in part two, we need to find the initial a register value such that the program is a quine. brute forcing won't work (the correct answer is 15 digits). the key insight is that both in the sample problem and the input, there's a loop where we output a%8 (out 4 instruction), then we divide it by 2^3 (adv 3 instruction). This means we're progressively outputting 3 bits of a from the right, then left-shifting 3 bits. knowing this, we can build up the input backwards: find the a value (0-7) which creates the last output, then multiply by 8 and add 0-7 looking to find the next value, and so on. we should keep track of all branches because a) there are multiple solutions and b) some branches don't work out.
