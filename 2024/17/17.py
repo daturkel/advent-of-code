@@ -71,6 +71,7 @@ def solve(lines: list[str]) -> tuple[str, int]:
     program = [int(c) for c in lines[4].removeprefix("Program: ").split(",")]
     out = execute(program, a, b, c, debug=False)
     part_one = ",".join(str(s) for s in out)
+
     to_try = list((i, 1) for i in range(8))
     solutions = []
     while to_try:
