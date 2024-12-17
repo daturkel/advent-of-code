@@ -16,6 +16,7 @@ class Node:
     xmax: int
     ymax: int
     score: int = 0
+    parent: Node | None = None
 
     def neighbors(self) -> list[Node]:
         neighbors = []
@@ -42,6 +43,7 @@ class Node:
                         xmax=self.xmax,
                         ymax=self.ymax,
                         score=self.score + score_delta,
+                        parent=self,
                     )
                 )
 
@@ -71,37 +73,44 @@ def solve(lines: list[str]) -> tuple[int, int]:
     ymax = len(lines) - 1
     x0 = 1
     y0 = len(lines) - 2
-    end = (xmax - 1, 1)
+    end_route = (xmax - 1, 1)
 
     distances = defaultdict(lambda: float("inf"))
-    distances[(x0, y0)] = 0
+    distances[(x0, y0, 1, 0)] = 0
 
     queue = [Node(x0, y0, 1, 0, xmax, ymax)]
     ends = []
-    visited = set()
+    # visited = set()
     score = float("inf")
     while queue:
         node = heapq.heappop(queue)
-        visited.add((node.x, node.y))
-        show(lines, node.x, node.y, node.score, visited)
-        input()
-        if (node.x, node.y) == end:
+        # visited.add((node.x, node.y))
+        # show(lines, node.x, node.y, node.score, visited)
+        # input()
+        if (node.x, node.y) == end_route:
             ends.append(node)
             score = node.score
         for neighbor in node.neighbors():
             if lines[neighbor.y][neighbor.x] != "#":
                 if (
-                    neighbor.score <= distances[(neighbor.x, neighbor.y)]
+                    neighbor.score
+                    <= distances[(neighbor.x, neighbor.y, neighbor.dx, neighbor.dy)]
                     and neighbor.score < score
                 ):
                     heapq.heappush(queue, neighbor)
-                    distances[(neighbor.x, neighbor.y)] = neighbor.score
+                    distances[(neighbor.x, neighbor.y, neighbor.dx, neighbor.dy)] = (
+                        neighbor.score
+                    )
 
-    print(ends)
-    for end in ends:
-        score = min(score, end.score)
+    all_visited = set((end_route,))
+    for end_route in ends:
+        node = end_route
+        while node.parent is not None:
+            node = node.parent
+            all_visited.add((node.x, node.y))
+        score = min(score, end_route.score)
 
-    return int(score), 0
+    return int(score), len(all_visited)
 
 
 if __name__ == "__main__":
