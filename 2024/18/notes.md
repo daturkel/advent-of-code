@@ -1,0 +1,1 @@
+A refreshingly easy day. For part 1, we use djikstra's algorithm to find the path. For part 2, I simply continue dropping blocks and testing to see if the maze is navigable until it's not.
