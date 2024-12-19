@@ -1,1 +1,3 @@
-A refreshingly easy day. For part 1, we use djikstra's algorithm to find the path. For part 2, I simply continue dropping blocks and testing to see if the maze is navigable until it's not.
+A refreshingly easy day. For part 1, we use djikstra's algorithm to find the path. 
+
+For part 2, I originally just continued dropping blocks and testing to see if the maze is navigable until it's not. This took about 3.5 seconds. However, I then introduced an optimization: modify our djikstra algorithm to also return all the points that are part of the fastest path. As we drop more blocks, we only need to rerun djikstra if a new block is dropped somewhere in the path of the most recent successful path to run. This skips a lot of unnecessary calls to djikstra. 
