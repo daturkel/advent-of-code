@@ -1,0 +1,1 @@
+Part 1 is easy enough: for each path in a maze, we check its two-hop neighbors and see how much time we would save by skipping to there.
