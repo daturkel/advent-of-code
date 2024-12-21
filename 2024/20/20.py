@@ -48,7 +48,7 @@ def solve(lines: list[str], save_threshold: int) -> tuple[int, int]:
                     part_one += 1
 
     part_two = 0
-    for i, (x1, y1) in enumerate(ordered_positions):
+    for i, (x1, y1) in enumerate(ordered_positions[: -1 * save_threshold]):
         for j, (x2, y2) in enumerate(ordered_positions[i + 1 :], start=i + 1):
             delta = j - i
             used = abs(x2 - x1) + abs(y2 - y1)
