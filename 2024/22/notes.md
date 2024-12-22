@@ -1,0 +1,1 @@
+Today's coding challenge has you perform a series of bitwise operations. They're fairly trivial to perform, but in part two we have to find a sequence of changes that leads to the highest 1s digit across four different streams of this series of iterations. I did it with bookkeeping and no smart logic and it takes about 15s.
