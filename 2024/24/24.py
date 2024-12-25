@@ -19,6 +19,7 @@ def solve(lines: list[str]) -> tuple[int, int]:
 
     i = 0
     part_one = 0
+    # max_z_num = 0
     while connections:
         i = i % len(connections)
         op, name1, name2, name3 = connections[i]
@@ -26,12 +27,15 @@ def solve(lines: list[str]) -> tuple[int, int]:
             values[name3] = op(values[name1], values[name2])
             if name3.startswith("z"):
                 z_num = int(name3[1:])
+                # max_z_num = max(z_num, max_z_num)
                 part_one += int(values[name3]) * 2**z_num
             del connections[i]
         else:
             i = i + 1
 
-    print(len(values))
+    # for i in range(max_z_num + 1):
+    #     if values[f"x{i:02d}"] + values[f"y{i:02d}"] != values[f"z{i:02d}"]:
+    #         print(values[f"x{i:02d}"], values[f"y{i:02d}"], values[f"z{i:02d}"])
 
     return part_one, 0
 
