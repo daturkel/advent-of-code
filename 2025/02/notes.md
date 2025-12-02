@@ -1,0 +1,3 @@
+I went the lazy way of just iterating through contents of the ranges rather than trying to find some fancy math to do it more efficiently (is it possible?). This turned out to be fast enough, as my final solution is in the 600ms range.
+
+For part 2, we use the itertools.batched function in python 3.13. We don't need it, but it saves a few lines. One trick to save some time is noting that we only have to deal with repetitions of 3 or 5 characters since the largest number is 10 digits.
