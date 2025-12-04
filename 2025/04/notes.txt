@@ -1,0 +1,1 @@
+A classic "look at neighbors in a grid" AoC puzzle. Part two is pretty straightforward as well, not much to say here.
