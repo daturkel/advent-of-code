@@ -1,0 +1,1 @@
+A much harder part two than usual today. The numbers are too big to brute force it in a reasonable time. Instead we have to continuously combine range objects. It's not enough to make one pass through (at least not in my implementation), we have to pass through a few times until it stops consolidating.
