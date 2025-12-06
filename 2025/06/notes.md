@@ -1,0 +1,1 @@
+I got part 1 in a nice functional golfed solution and was so pleased with it, but part 2 needs you to pay attention to whitespace so everything from part 1 fell apart. The essential trick is to use the last line to determine how wide each equation is. Then we iterate left to right through the full height of the equations and find the operands in both horizontal and vertical form.
