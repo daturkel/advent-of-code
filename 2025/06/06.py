@@ -12,10 +12,7 @@ def solve_alt(lines: list[str]) -> tuple[int, int]:
     processed_lines = [map(int, line.split()) for line in lines[:-1]]
     operand_list = zip(*processed_lines)
     for operator, operands in zip(lines[-1].split(), operand_list):
-        if operator == "+":
-            part_one += sum(operands)
-        else:
-            part_one += prod(operands)
+        part_one += OP_MAP[operator](operands)
     return part_one, 0
 
 
@@ -26,13 +23,15 @@ def solve(lines: list[str]) -> tuple[int, int]:
     num_operands = len(lines) - 1
     # ["*   ", "+  ", ... ]
     operators = re.findall(r"[\*\+]\s*", lines[-1])
+    # pad last operator to avoid off-by-one error
+    operators[-1] += " "
     for operator in operators:
         # how wide is this equation
         op_length = len(operator)
         operands = []
         # get all operands from each row, preserving whitespace
         for j in range(num_operands):
-            num = lines[j][:op_length]
+            num = lines[j][: op_length - 1]
             operands.append(num)
             # chop off the start of the line
             lines[j] = lines[j][op_length:]
@@ -41,13 +40,11 @@ def solve(lines: list[str]) -> tuple[int, int]:
         part_one += OP_MAP[operator](map(lambda x: int(x.strip()), operands))
         operands_two = []
         # transpose the operands for part 2, then aggregate
-        for j in range(op_length):
+        for j in range(op_length - 1):
             s = ""
             for row in operands:
                 s += row[j].strip()
-            # ignore empty string at end of very last equation
-            if s:
-                operands_two.append(int(s))
+            operands_two.append(int(s))
         part_two += OP_MAP[operator](operands_two)
 
     return part_one, part_two
@@ -61,6 +58,6 @@ if __name__ == "__main__":
 
     part_one, part_two = solve(lines)
     toc = perf_counter()
-    time_us = round((toc - tic) * 1000)
+    time_us = round((toc - tic) * 1000000)
 
-    print(f"{part_one=}, {part_two=} ({time_us}ms)")
+    print(f"{part_one=}, {part_two=} ({time_us}µs)")
