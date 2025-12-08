@@ -1,0 +1,1 @@
+A classic case of don't prematurely optimize. Doing this manually (calculating every distance, sorting the full list of distances) turns out to be fast. Both parts combined are 258ms. I tried an optimization to maintain sorted distance with bisect.insort_left but it was way slower than just sorting. I didn't bother with heapq.
