@@ -16,7 +16,7 @@ def get_areas(points: list[tuple[int, int]]) -> dict[tuple[int, int], int]:
     return result
 
 
-def solve(lines: list[str], x: int) -> tuple[int, int]:
+def solve(lines: list[str]) -> tuple[int, int]:
     red_points = []
     xs = []
     ys = []
@@ -98,12 +98,12 @@ def solve(lines: list[str], x: int) -> tuple[int, int]:
 
 
 if __name__ == "__main__":
-    input_file, x = (sys.argv[1], 1000) if len(sys.argv) > 1 else ("./test.txt", 10)
+    input_file = sys.argv[1] if len(sys.argv) > 1 else "./test.txt"
     tic = perf_counter()
     with open(input_file, "r") as file:
         lines = file.read().splitlines()
 
-    part_one, part_two = solve(lines, x)
+    part_one, part_two = solve(lines)
     toc = perf_counter()
     time_us = round((toc - tic) * 1000)
 
