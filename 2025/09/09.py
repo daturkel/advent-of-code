@@ -74,6 +74,7 @@ def solve(lines: list[str], x: int) -> tuple[int, int]:
             explored.add((xx, yy))
 
     # solve
+    part_two = 0
     for ix, ((i, j), area) in enumerate(
         sorted(areas.items(), reverse=True, key=lambda x: x[1])
     ):
@@ -90,7 +91,10 @@ def solve(lines: list[str], x: int) -> tuple[int, int]:
             if not viable:
                 break
         if viable:
-            return part_one, area
+            part_two = area
+            break
+
+    return part_one, part_two
 
 
 if __name__ == "__main__":

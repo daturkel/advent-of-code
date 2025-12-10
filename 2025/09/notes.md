@@ -1,0 +1,3 @@
+Today was brutal. Part1 is easy enough to brute force, but part 2 is not.
+
+I started out by trying to flood fill the outside of the grid, but the grid is way too big, on the order of 9 billion slots. I was completely stuck until I gave up and read a hint on reddit: coordinate compression. Mapping every x-coordinate to its ranking in the sorted list of x-coordinates, and ditto for y-coordinates, dramatically reduces the size of the space to around 250 by 250. Now it's small enough for us to flood fill the outside and check every space inside a rectangle (in the compressed space) to see if it's outside. Since we already have to calculate all the areas in part 1, we sort them descending and check for one that's fully inside.
