@@ -1,6 +1,8 @@
 import sys
-from itertools import combinations, combinations_with_replacement
+from itertools import combinations
 from time import perf_counter
+
+import numpy as np
 
 
 def solve(lines: list[str]) -> tuple[int, int]:
@@ -38,21 +40,17 @@ def solve(lines: list[str]) -> tuple[int, int]:
                     break
             if solved:
                 break
-        n_buttons = 1
         solved = False
-        while True:
-            for button_set in combinations_with_replacement(buttons, n_buttons):
-                joltage_trial = [0 for _ in range(len(lights))]
-                for button in button_set:
-                    for n in button:
-                        joltage_trial[n] += 1
-                if joltage_trial == joltages:
-                    solved = True
-                    part_two += n_buttons
-                    break
-            if solved:
-                break
-            n_buttons += 1
+        A = [[0] * len(buttons) for _ in range(len(lights))]
+        for i, button in enumerate(buttons):
+            for n in button:
+                A[n][i] = 1
+        for row in A:
+            print(row)
+        print()
+        print(joltages)
+        print(np.linalg.lstsq(A, joltages))
+        print()
 
     return part_one, part_two
 
