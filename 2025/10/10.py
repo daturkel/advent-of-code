@@ -2,7 +2,7 @@ import sys
 from itertools import combinations
 from time import perf_counter
 
-import numpy as np
+from pulp import GUROBI, LpInteger, LpProblem, LpVariable, value
 
 
 def solve(lines: list[str]) -> tuple[int, int]:
@@ -40,17 +40,27 @@ def solve(lines: list[str]) -> tuple[int, int]:
                     break
             if solved:
                 break
-        solved = False
-        A = [[0] * len(buttons) for _ in range(len(lights))]
-        for i, button in enumerate(buttons):
-            for n in button:
-                A[n][i] = 1
-        for row in A:
-            print(row)
-        print()
-        print(joltages)
-        print(np.linalg.lstsq(A, joltages))
-        print()
+
+        prob = LpProblem()
+        variables = [
+            LpVariable(f"x{i}", 0, None, LpInteger) for i in range(len(buttons))
+        ]
+        # minimize sum of button presses
+        prob += sum(variables)
+        # add constraints
+        for ix, j in enumerate(joltages):
+            prob += (
+                sum(  # sum of
+                    [
+                        variables[bix]  # variable corresponding to this button
+                        for bix, button in enumerate(buttons)
+                        if ix in button  # if the corresponding light is on this button
+                    ]
+                )
+                == j  # == total joltage
+            )
+        GUROBI(msg=0).solve(prob)  # type: ignore
+        part_two += int(value(prob.objective))  # type: ignore
 
     return part_one, part_two
 
