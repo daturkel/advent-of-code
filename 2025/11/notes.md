@@ -1,0 +1,1 @@
+I used iterative dfs for part 1 but the graph is too big to use that for part 2, so I had to switch to recursive dfs with a cache for part 2, which I semi-shamelessly stole from reddit.

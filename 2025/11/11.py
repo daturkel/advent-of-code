@@ -5,7 +5,39 @@ START = "you"
 END = "out"
 
 SERVER = "svr"
-REQUIRED = ["dac", "fft"]
+FFT = "fft"
+DAC = "dac"
+
+
+def get_paths(
+    graph: dict[str, list[str]], start: str, end: str, cache: dict[str, int] = {}
+) -> int:
+    stack = [start]
+    n = 0
+    while stack:
+        node = stack.pop()
+        for edge in graph[node]:
+            if edge == end:
+                n += 1
+            elif edge == END:
+                continue
+            else:
+                stack.append(edge)
+    return n
+
+
+def get_paths_recursive(
+    graph: dict[str, list[str]], start: str, end: str, cache: dict[str, int] = {}
+) -> int:
+    if start == end:
+        return 1
+    elif start in cache:
+        return cache[start]
+    result = 0
+    for edge in graph[start]:
+        result += get_paths_recursive(graph, edge, end, cache)
+    cache[start] = result
+    return result
 
 
 def solve(lines: list[str]) -> tuple[int, int]:
@@ -16,17 +48,17 @@ def solve(lines: list[str]) -> tuple[int, int]:
         head, tail = line.split(": ")
         neighbors = tail.split(" ")
         graph[head] = neighbors
-    stack = [START]
-    explored = set()
-    while stack:
-        node = stack.pop()
-        if node not in explored or True:
-            explored.add(node)
-            for edge in graph[node]:
-                if edge == END:
-                    part_one += 1
-                else:
-                    stack.append(edge)
+    graph[END] = []
+    part_one = get_paths_recursive(graph, START, END, {})
+
+    svr_fft = get_paths_recursive(graph, SERVER, FFT, {})
+    svr_dac = get_paths_recursive(graph, SERVER, DAC, {})
+    dac_fft = get_paths_recursive(graph, DAC, FFT, {})
+    fft_dac = get_paths_recursive(graph, FFT, DAC, {})
+    fft_end = get_paths_recursive(graph, FFT, END, {})
+    dac_end = get_paths_recursive(graph, DAC, END, {})
+
+    part_two = svr_fft * fft_dac * dac_end + svr_dac * dac_fft * fft_end
 
     return part_one, part_two
 
