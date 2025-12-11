@@ -9,23 +9,6 @@ FFT = "fft"
 DAC = "dac"
 
 
-def get_paths(
-    graph: dict[str, list[str]], start: str, end: str, cache: dict[str, int] = {}
-) -> int:
-    stack = [start]
-    n = 0
-    while stack:
-        node = stack.pop()
-        for edge in graph[node]:
-            if edge == end:
-                n += 1
-            elif edge == END:
-                continue
-            else:
-                stack.append(edge)
-    return n
-
-
 def get_paths_recursive(
     graph: dict[str, list[str]], start: str, end: str, cache: dict[str, int] = {}
 ) -> int:
